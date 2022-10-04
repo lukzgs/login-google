@@ -1,7 +1,7 @@
 Login with Google
 
-npm install
-npm start 
+- `npm install`
+- `npm start`
 
 and thats it...
 
