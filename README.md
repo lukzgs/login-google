@@ -7,7 +7,7 @@ and thats it...
 
 This is just a piece of a greater project.
 
-In thie project I choose the following libs:
+In this project I choose the following libs:
 - `firebase`
 - `react-firebase-hooks`
 - `react-dom`
