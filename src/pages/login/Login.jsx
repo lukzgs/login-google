@@ -5,6 +5,7 @@ import './Login.css';
 
 export const Login = () => {
   const { signInWithGoogle, signed } = useContext(Context);
+  console.log(signed);
 
   async function signInGoogle() {
     await signInWithGoogle();
