@@ -25,8 +25,8 @@ export const Provider = ({ children }) => {
 
   const signInWithGoogle = async () => {
     try {
-      const googleUsarData = await auth.signInWithPopup(googleAuthProvider);
-      const { credential:{ accessToken: token }, user } = googleUsarData;
+      const googleUserData = await auth.signInWithPopup(googleAuthProvider);
+      const { credential:{ accessToken: token }, user } = googleUserData;
       setUser(user);  
       sessionStorage.setItem('@AuthFirebase: token', token);
       sessionStorage.setItem('@AuthFirebase: user', JSON.stringify(user))
