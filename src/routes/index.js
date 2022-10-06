@@ -4,6 +4,5 @@ import { Context } from "../context/context"
 
 export const PrivateRoutes = () => {
   const { signed } = useContext(Context);
-  console.log(signed);
   return signed ? <Outlet /> : <Navigate to='/' />
 }
