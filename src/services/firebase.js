@@ -4,15 +4,7 @@
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
 import 'firebase/compat/storage';
-
-const firebaseConfig = {
-  apiKey: "AIzaSyBjkT21UGvKG490-90lftyKnqAIgI2cTBA",
-  authDomain: "login-59a05.firebaseapp.com",
-  projectId: "login-59a05",
-  storageBucket: "login-59a05.appspot.com",
-  messagingSenderId: "325142502857",
-  appId: "1:325142502857:web:3e60fed0351b5ad8a4dc18"
-};
+import { firebaseConfig } from '../firebase';
 
 if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig) };
 
