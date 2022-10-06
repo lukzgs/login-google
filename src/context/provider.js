@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { Navigate } from "react-router-dom";
 import { auth } from "../services/firebase";
-import { useUserData } from "../services/hooks/userData";
 import { Context } from './context'; 
 
 import { GoogleAuthProvider } from 'firebase/auth';
@@ -24,9 +23,6 @@ export const Provider = ({ children }) => {
 
     storageContent();
   }, []);
-
-  // const userData = useUserData();
-  // console.log('user data: ', userData);
 
   const signInWithGoogle = async () => {
     try {
