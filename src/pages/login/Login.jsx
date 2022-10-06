@@ -1,6 +1,5 @@
 import { useContext } from "react"
 import { Navigate } from "react-router-dom";
-import Navbar from "../../components/navbar/Navbar";
 import { Context } from "../../context/context"
 import './Login.css';
 
@@ -30,7 +29,6 @@ export const Login = () => {
 
   return (
     <>
-      <Navbar />
       <div className="login-page">
         <div className="login-form">
           <div className="buttons">
