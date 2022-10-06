@@ -1,7 +1,7 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { PrivateRoutes } from ".";
-import { Home } from "../pages/home";
-import { Login } from "../pages/login";
+import { Home } from "../pages/home/Home";
+import { Login } from "../pages/login/Login";
 
 export const AppRoutes = () => {
   return (
@@ -11,7 +11,6 @@ export const AppRoutes = () => {
         <Route path='/home' element={ <PrivateRoutes /> } >
           <Route path='/home' element={ <Home /> }/>
         </Route>
-
       </Routes>
     </BrowserRouter>
   )
