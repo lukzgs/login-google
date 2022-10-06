@@ -13,5 +13,4 @@ In this project I choose the following libs:
 - `react-dom`
 - `react-router-dom`
 
-
 Feel free to use this code.
