@@ -14,8 +14,8 @@ export default function Navbar() {
         <ul>
           <li>
             { user ? 
-              username ? username : 'loading...'
-            : null }
+              username ? username : user.displayName
+            : null  }
           </li>
         </ul>
       </nav>
