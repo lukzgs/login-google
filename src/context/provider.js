@@ -6,12 +6,13 @@ import 'firebase/compat/storage';
 import { useEffect, useState } from "react";
 import { Navigate } from "react-router-dom";
 import { auth } from "../services/firebase";
+import { useUserData } from "../services/hooks/userData";
 import { Context } from "./context"; 
 
 export const Provider = ({ children }) => {
   const googleAuthProvider = new firebase.auth.GoogleAuthProvider();
-
   const [user, setUser] = useState(null);
+  const [username, setUsername] = useState(null);
 
   useEffect(() => {
     const storageContent = () => {
@@ -23,6 +24,7 @@ export const Provider = ({ children }) => {
     storageContent();
   }, []);
 
+  // useUserData();
   const signInWithGoogle = async () => {
     try {
       const googleUserData = await auth.signInWithPopup(googleAuthProvider);
@@ -51,6 +53,8 @@ export const Provider = ({ children }) => {
   const value = {
     user,
     setUser,
+    username,
+    setUsername,
     signInWithGoogle,
     signOut,
     signed: !!user,
