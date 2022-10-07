@@ -26,7 +26,7 @@ export const ChooseUsername = () => {
       const batch = firestore.batch();
       batch.set(userRef, { 
         username: formValue,
-        photoURl: user.photoURl,
+        photoURL: user.photoURL,
         displayName: user.displayName,
       });
       batch.set(usernameRef, {
