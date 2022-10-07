@@ -7,7 +7,8 @@ export const ChooseUsername = () => {
   const { 
     user, 
     username, 
-    signed, signOut } = useContext(Context);
+    signed, 
+    signOut } = useContext(Context);
   
   const [ formValue, setFormValue ] = useState('');
   const [ isValid, setIsValid ] = useState(false);
@@ -16,7 +17,6 @@ export const ChooseUsername = () => {
   useEffect(() => {
     checkUsername(formValue);
   }, [formValue]);
-
 
     const onSubmit = async (e) => {
       e.preventDefault();
