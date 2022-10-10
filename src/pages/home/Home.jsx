@@ -1,30 +1,31 @@
-import { useContext, useEffect, useState } from "react"
+import { useContext } from "react"
 import { Navigate } from "react-router-dom";
 import { Context } from "../../context/context"
-import { firestore } from "../../services/firebase";
-import { useUserData } from "../../services/hooks/userData";
 import './Home.css'
 
 export const Home = () => {
-  const { user, signOut } = useContext(Context);
-
-  const getUserData = useUserData();
-  const { username } = getUserData;
+  const { user, signOut, userData } = useContext(Context);
+  const { username } = userData();
+  console.log('username: ', username);
 
   return (
     <>
-      <main>
-        <h1>Home</h1>
-        <h3>Welcome { user.displayName }</h3>
-        { username === null ? 
-            'loading...' : 
-            username ? 
-              null : <Navigate to='/username' /> }
-
-        <button onClick={ () => signOut() }>
-          Sign Out
-        </button>
-      </main>
+      { user ? ( 
+        <main>
+          <h1>Home</h1>
+          <h3>Welcome { user.displayName }</h3>
+          { username === null ?
+            null :
+            ( username === false ? ( <Navigate to='/username' /> ) : 
+            console.log('não pegou false, portanto AQUI É HOME')) 
+          }
+          <button onClick={ () => signOut() }>
+            Sign Out
+          </button>
+        </main>
+      ) 
+      : '...loading' }
+      
     </>
   )
 }

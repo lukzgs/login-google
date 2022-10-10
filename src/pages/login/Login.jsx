@@ -4,7 +4,7 @@ import { Context } from "../../context/context"
 import './Login.css';
 
 export const Login = () => {
-  const { signInWithGoogle, signed } = useContext(Context);
+  const { signInWithGoogle, user } = useContext(Context);
 
   async function signInGoogle() {
     await signInWithGoogle();
@@ -32,7 +32,7 @@ export const Login = () => {
       <div className="login-page">
         <div className="login-form">
           <div className="buttons">
-            { !signed ? loginBtns(): <Navigate to='/home' /> }    
+            { !user ? loginBtns(): <Navigate to='/home' /> }    
           </div>
         </div>
       </div>

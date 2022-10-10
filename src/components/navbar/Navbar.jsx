@@ -1,21 +1,22 @@
 import { useContext } from "react"
 import { Context } from "../../context/context"
-import { useUserData } from "../../services/hooks/userData";
 import './Navbar.css';
 
-export default function Navbar() {
-  const { user } = useContext(Context);
-  const getUserData = useUserData();
-  const { username } = getUserData;
+export default function  Navbar() {
+  const { user, userData } = useContext(Context);
+  const { username } = userData();
 
   return (
     <div className="side-by-side">
       <nav className="navbar">
         <ul>
           <li>
-            { user ? 
-              username ? username : user.displayName
-            : null  }
+            { !!user ? (
+              user ?
+                username ? username : user.displayName
+              : 'loading' 
+            ) 
+            : null }            
           </li>
         </ul>
       </nav>

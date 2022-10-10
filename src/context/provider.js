@@ -6,12 +6,14 @@ import 'firebase/compat/storage';
 import { useEffect, useState } from "react";
 import { Navigate } from "react-router-dom";
 import { auth } from "../services/firebase";
+import { useUserData } from "../services/hooks/userData";
 import { Context } from "./context"; 
 
 export const Provider = ({ children }) => {
   const googleAuthProvider = new firebase.auth.GoogleAuthProvider();
   const [user, setUser] = useState(null);
 
+  const userData = useUserData;
   useEffect(() => {
     const storageContent = () => {
       const sessionToken = sessionStorage.getItem('@AuthFirebase: token');
@@ -26,7 +28,7 @@ export const Provider = ({ children }) => {
     try {
       const googleUserData = await auth.signInWithPopup(googleAuthProvider);
       const { credential:{ accessToken: token }, user } = googleUserData;
-      setUser(user);  
+      setUser(user);
       sessionStorage.setItem('@AuthFirebase: token', token);
       sessionStorage.setItem('@AuthFirebase: user', JSON.stringify(user))
     }
@@ -52,7 +54,7 @@ export const Provider = ({ children }) => {
     setUser,
     signInWithGoogle,
     signOut,
-    signed: !!user,
+    userData
   }
 
   return (

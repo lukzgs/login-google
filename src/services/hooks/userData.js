@@ -9,15 +9,20 @@ export const useUserData = () => {
   useEffect(() => {
     let unsubscribe;
 
-    if (user) {
-      const users = firestore.collection('users').doc(user.uid);
-      unsubscribe = users.onSnapshot(
-        (doc) => { setUsername(doc.data()?.username) }
-      );
+    const getUserData = async () => {
+      if (user) {
+        const users = firestore.collection('users').doc(user.uid);
+        unsubscribe = users.onSnapshot(
+          async (doc) => { setUsername( await doc.data()?.username) }
+        );
+      }
+      else if (username) { return username }
+      else { setUsername(false) };
+      
+      return unsubscribe;
     }
-    else { setUsername(false) };
-    
-    return unsubscribe;
+
+    getUserData();
   }, [user]);
 
   return { username, user };

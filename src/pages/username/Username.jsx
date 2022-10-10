@@ -7,7 +7,6 @@ export const ChooseUsername = () => {
   const { 
     user, 
     username, 
-    signed, 
     signOut } = useContext(Context);
   
   const [ formValue, setFormValue ] = useState('');
