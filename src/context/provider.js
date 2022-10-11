@@ -1,4 +1,6 @@
 import { GoogleAuthProvider } from "firebase/auth";
+import { FacebookAuthProvider } from "firebase/auth";
+
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
 import 'firebase/compat/storage';
@@ -9,8 +11,6 @@ import { auth } from "../services/firebase";
 import { Context } from "./context"; 
 
 export const Provider = ({ children }) => {
-  const googleAuthProvider = new firebase.auth.GoogleAuthProvider();
-
   const [user, setUser] = useState(null);
 
   useEffect(() => {
@@ -24,18 +24,38 @@ export const Provider = ({ children }) => {
   }, []);
 
   const signInWithGoogle = async () => {
+    const googleAuthProvider = new firebase.auth.GoogleAuthProvider();
     try {
       const googleUserData = await auth.signInWithPopup(googleAuthProvider);
       const { credential:{ accessToken: token }, user } = googleUserData;
       setUser(user);  
-      localStorage.setItem('@AuthFirebase: token', token);
-      localStorage.setItem('@AuthFirebase: user', JSON.stringify(user))
+      localStorage.setItem('@Google: token', token);
+      localStorage.setItem('@Google: user', JSON.stringify(user))
     }
     catch (error) {
       const errorCode = error.code;
       const errorMessage = error.message;
       const email = error.customData.email;
       const credential = GoogleAuthProvider.credentialFromError(error);
+      console.error(error);
+      console.log(errorCode, errorMessage, email, credential);
+    }
+  }
+
+  const signInWithFacebook = async () => {
+    const facebookAuthProvider = new firebase.auth.FacebookAuthProvider();
+    try {
+      const googleUserData = await auth.signInWithPopup(facebookAuthProvider);
+      const { credential:{ accessToken: token }, user } = googleUserData;
+      setUser(user);  
+      localStorage.setItem('@Facebook: token', token);
+      localStorage.setItem('@Facebook: user', JSON.stringify(user))
+    }
+    catch (error) {
+      const errorCode = error.code;
+      const errorMessage = error.message;
+      const email = error.customData.email;
+      const credential = FacebookAuthProvider.credentialFromError(error);
       console.error(error);
       console.log(errorCode, errorMessage, email, credential);
     }
@@ -52,6 +72,7 @@ export const Provider = ({ children }) => {
     user,
     setUser,
     signInWithGoogle,
+    signInWithFacebook,
     signOut,
     signed: !!user,
   }

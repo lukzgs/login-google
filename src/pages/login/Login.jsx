@@ -4,10 +4,25 @@ import { Context } from "../../context/context"
 import './Login.css';
 
 export const Login = () => {
-  const { signInWithGoogle, signed } = useContext(Context);
+  const { 
+    signInWithGoogle,
+    signInWithFacebook,
+    signed } = useContext(Context);
 
   async function signInGoogle() {
     await signInWithGoogle();
+  }
+
+  const btnFacebook = () => {
+    return (
+      <button
+        className="loginBtn loginBtn-facebook"
+        onClick={ () => { signInWithFacebook() } }
+        key='facebook'
+      >
+        Sign in with Facebook
+      </ button> 
+    )
   }
 
   const btnGoogle = () => {
@@ -23,7 +38,7 @@ export const Login = () => {
   }
 
   const loginBtns = () => {
-    const buttons = [btnGoogle()];
+    const buttons = [btnGoogle(), btnFacebook()];
     return buttons
   }
 
