@@ -4,8 +4,7 @@ import { Context } from "../../context/context"
 import './Home.css'
 
 export const Home = () => {
-  const { user, signOut, userData } = useContext(Context);
-  const { username } = userData();
+  const { user, signOut, userData, username } = useContext(Context);
   console.log('username: ', username);
 
   return (

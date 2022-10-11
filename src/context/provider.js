@@ -12,6 +12,7 @@ import { Context } from "./context";
 export const Provider = ({ children }) => {
   const googleAuthProvider = new firebase.auth.GoogleAuthProvider();
   const [user, setUser] = useState(null);
+  const [username, setUsername] = useState(null);
 
   const userData = useUserData;
   useEffect(() => {
@@ -53,6 +54,8 @@ export const Provider = ({ children }) => {
     user,
     setUser,
     signInWithGoogle,
+    username, 
+    setUsername,
     signOut,
     userData
   }
