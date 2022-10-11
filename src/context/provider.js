@@ -15,8 +15,8 @@ export const Provider = ({ children }) => {
 
   useEffect(() => {
     const storageContent = () => {
-      const sessionToken = sessionStorage.getItem('@AuthFirebase: token');
-      const sessionUser = sessionStorage.getItem('@AuthFirebase: user');
+      const sessionToken = localStorage.getItem('@AuthFirebase: token');
+      const sessionUser = localStorage.getItem('@AuthFirebase: user');
       if (sessionToken && sessionUser) { setUser(JSON.parse(sessionUser)) };
     };
 
@@ -28,8 +28,8 @@ export const Provider = ({ children }) => {
       const googleUserData = await auth.signInWithPopup(googleAuthProvider);
       const { credential:{ accessToken: token }, user } = googleUserData;
       setUser(user);  
-      sessionStorage.setItem('@AuthFirebase: token', token);
-      sessionStorage.setItem('@AuthFirebase: user', JSON.stringify(user))
+      localStorage.setItem('@AuthFirebase: token', token);
+      localStorage.setItem('@AuthFirebase: user', JSON.stringify(user))
     }
     catch (error) {
       const errorCode = error.code;
@@ -43,7 +43,7 @@ export const Provider = ({ children }) => {
 
   const signOut = () => {
     auth.signOut();
-    sessionStorage.clear();
+    localStorage.clear();
     setUser(null);
     return <Navigate to='/' />
   }
