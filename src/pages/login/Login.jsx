@@ -1,5 +1,6 @@
 import { useContext } from "react"
 import { Navigate } from "react-router-dom";
+import { LoginForm } from "../../components/loginForm/LoginForm";
 import { Context } from "../../context/context"
 import './Login.css';
 
@@ -43,14 +44,13 @@ export const Login = () => {
   }
 
   return (
-    <>
-      <div className="login-page">
-        <div className="login-form">
-          <div className="buttons">
-            { !signed ? loginBtns(): <Navigate to='/home' /> }    
-          </div>
+    <div className="login-page">
+      <div className="login-form">
+        <LoginForm />
+        <div className="buttons">
+          { !signed ? loginBtns(): <Navigate to='/home' /> }    
         </div>
       </div>
-    </>
+    </div>
   )
 }

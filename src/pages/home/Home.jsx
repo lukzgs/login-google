@@ -13,7 +13,6 @@ export const Home = () => {
           Sign Out
         </button>
       </main>
-      
     </>
   )
 }

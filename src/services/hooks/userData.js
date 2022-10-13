@@ -16,7 +16,7 @@ export const useUserData = () => {
     else { setUsername(null) };
     
     return unsubscribe;
-  },[user]);
+  }, [user]);
 
   return { user, username };
 }
