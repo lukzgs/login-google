@@ -57,20 +57,43 @@
 }
 
 .loginBtn-google:before {
-  border-right: #bb3f30 2px;
+  border-right: #dd4b39 2px;
   background: url("https://s3-us-west-2.amazonaws.com/s.cdpn.io/14082/icon_google.png")
     6px 6px no-repeat;
 }
 
 .loginBtn-google:hover,
 .loginBtn-google:focus {
-  background: #e74b37;
+  background: #dd4b39;
   cursor: pointer;
 }
 
 .loginBtn-google:active {
   box-shadow: inset 0 0 0 32px rgba(0, 0, 0, 0.1);
 }
+
+/* Facebook */
+.loginBtn-facebook {
+  background: #3b5998;
+}
+
+.loginBtn-facebook:before {
+  border-right: #3b5998 2px;
+  background: url("https://s3-us-west-2.amazonaws.com/s.cdpn.io/14082/icon_facebook.png")
+    6px 6px no-repeat;
+}
+
+.loginBtn-facebook:hover,
+.loginBtn-facebook:focus {
+  background: #3b5998;
+  cursor: pointer;
+}
+
+.loginBtn-facebook:active {
+  box-shadow: inset 0 0 0 32px rgba(0, 0, 0, 0.1);
+}
+
+
 
 @media only screen and (max-width: 768px) {
   button {
@@ -112,6 +135,5 @@ button.btnLogin {
   align-items: center;
   padding: 200px;
   transform: translate(0 , 150%);
-  transform: translateY(150%); */
-  
+  transform: translateY(150%); */  
 }
