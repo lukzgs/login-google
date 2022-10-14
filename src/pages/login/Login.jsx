@@ -66,7 +66,7 @@ export const Login = () => {
         <LoginForm />
       </div>
       <div className="buttons">
-        { !signed ? loginBtns(): <Navigate to='/home' /> }    
+        { !signed ? null : <Navigate to='/home' /> }    
       </div>
     </div>
   )
