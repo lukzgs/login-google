@@ -4,41 +4,35 @@ import { useCreateUserWithEmailAndPassword } from 'react-firebase-hooks/auth';
 import { Link } from 'react-router-dom';
 import { Context } from '../../context/context';
 import { auth } from '../../services/firebase';
-
-
-export const LoginForm = () => {
+export const ForgotPassword = () => {
   const [ email, setEmail ] = useState('');
   const [ password, setPassword ] = useState('');
 
-  const { 
-    signInWithGoogle,
-    signInWithFacebook } = useContext(Context);
-
   return (
     <>
-      <div 
-        className="text-center mt-16"
-        id='title'
-      >
-        <div className="flex items-center justify-center">
-          <svg fill="none" viewBox="0 0 24 24" className="w-12 h-12 text-blue-500" stroke="currentColor">
-            <path strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
-          </svg>
-        </div>
-
-        <h2 className="text-4xl tracking-tight">
-          Sign in into your account
-        </h2>
-
-        <span className="text-sm"> 
-          or
-          <br/>
-          <Link to='/signup' className="text-blue-500">
-            register a new account
-          </Link> 
-
-        </span>
+    <div className="forgot-password-page">
+      <div className="forgot-password-form"/>
+    </div>
+    <div 
+      className="text-center mt-16"
+      id='title'
+    >
+      <div className="flex items-center justify-center">
+        <svg fill="none" viewBox="0 0 24 24" className="w-12 h-12 text-blue-500" stroke="currentColor">
+          <path strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+        </svg>
       </div>
+      <h2 className="text-4xl tracking-tight">
+        Sign in into your account
+      </h2>
+      <span className="text-sm"> 
+        or
+        <br/>
+        <Link to="/signup" className="text-blue-500">
+          register a new account
+        </Link> 
+      </span>
+    </div>
 
       <div className="flex justify-center my-2 mx-4 md:mx-0">
         <form 
@@ -95,7 +89,7 @@ export const LoginForm = () => {
               <div className="w-full md:w-1/3 px-3 pt-4 mx-2 border-t border-gray-400">
                 <button
                   id='btn-google'
-                  onClick={ () => signInWithGoogle() }
+                  // onClick={ () => signInWithGoogle() }
                   className='appearance-none flex items-center justify-center w-full bg-gray-100 text-gray-700 shadow border border-gray-500 rounded-lg py-3 px-3 leading-tight hover:bg-gray-200 hover:text-gray-700 focus:outline-none'>
                   <svg className="h-6 w-6 fill-current text-gray-700" viewBox="0 0 512 512">
                     <path d="M231.5,183.5c2.8,10.7,2.7,20.8-0.5,30.4c-3.2,9.6-8.7,15.5-16.5,17.6h-5.3c-14.9,0-25.6-10.7-32-32
@@ -117,7 +111,7 @@ export const LoginForm = () => {
               <div className="w-full md:w-1/3 px-3 pt-4 mx-2">
                 <button
                   id='btn-facebook'
-                  onClick={ () => signInWithFacebook() }
+                  // onClick={ () => signInWithFacebook() }
                   className="appearance-none flex items-center justify-center w-full bg-gray-100 text-gray-700 shadow border border-gray-500 rounded-lg py-3 px-3 leading-tight hover:bg-gray-200 hover:text-gray-700 focus:outline-none">
                     <svg className="h-6 w-6 fill-current text-gray-700" viewBox="0 0 512 512">
                       <path id="XMLID_5_" className="st0" d="M256,0C114.5,0,0,114.5,0,256s114.5,256,256,256s256-114.5,256-256S397.5,0,256,0z M324,255.1
@@ -138,6 +132,6 @@ export const LoginForm = () => {
           </div>
         </form>
       </div>
-    </>
+      </>
   )
-};
+              }

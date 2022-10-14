@@ -1,6 +1,5 @@
 import { useContext } from "react"
 import { Context } from "../../context/context"
-import './Home.css'
 
 export const Home = () => {
   const { user, signOut } = useContext(Context);
