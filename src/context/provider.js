@@ -61,6 +61,25 @@ export const Provider = ({ children }) => {
     }
   }
 
+  // const signInWithGithub = async () => {
+  //   const githubAuthProvider = new firebase.auth.GithubAuthProvider();
+  //   try {
+  //     const googleUserData = await auth.signInWithPopup(githubAuthProvider);
+  //     const { credential:{ accessToken: token }, user } = googleUserData;
+  //     setUser(user);  
+  //     localStorage.setItem('@Github: token', token);
+  //     localStorage.setItem('@Github: user', JSON.stringify(user))
+  //   }
+  //   catch (error) {
+  //     const errorCode = error.code;
+  //     const errorMessage = error.message;
+  //     const email = error.customData.email;
+  //     const credential = FacebookAuthProvider.credentialFromError(error);
+  //     console.error(error);
+  //     console.log(errorCode, errorMessage, email, credential);
+  //   }
+  // }
+
   const signOut = () => {
     auth.signOut();
     localStorage.clear();
@@ -73,6 +92,7 @@ export const Provider = ({ children }) => {
     setUser,
     signInWithGoogle,
     signInWithFacebook,
+    // signInWithGithub,
     signOut,
     signed: !!user,
   }

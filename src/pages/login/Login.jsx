@@ -8,6 +8,7 @@ export const Login = () => {
   const { 
     signInWithGoogle,
     signInWithFacebook,
+    // signInWithGithub,
     signed } = useContext(Context);
 
   async function signInGoogle() {
@@ -38,8 +39,24 @@ export const Login = () => {
     )
   }
 
+  // const btnGitHub = () => {
+  //   return (
+  //     <button
+  //       className="loginBtn loginBtn-github"
+  //       onClick={ () => { signInWithGithub() } }
+  //       key='github'
+  //     >
+  //       Sign in with Github
+  //     </ button> 
+  //   )
+  // }
+
   const loginBtns = () => {
-    const buttons = [btnGoogle(), btnFacebook()];
+    const buttons = [
+      btnGoogle(),
+      btnFacebook(),
+      // btnGitHub()
+    ];
     return buttons
   }
 
@@ -47,9 +64,9 @@ export const Login = () => {
     <div className="login-page">
       <div className="login-form">
         <LoginForm />
-        <div className="buttons">
-          { !signed ? loginBtns(): <Navigate to='/home' /> }    
-        </div>
+      </div>
+      <div className="buttons">
+        { !signed ? loginBtns(): <Navigate to='/home' /> }    
       </div>
     </div>
   )
