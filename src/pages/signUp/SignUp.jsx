@@ -26,7 +26,7 @@ export const SignUp = () => {
         </div>
 
         <h2 className="text-4xl tracking-tight">
-          Sign up your account
+          Register your account
         </h2>
       </div>
 
