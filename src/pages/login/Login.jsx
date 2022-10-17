@@ -7,12 +7,11 @@ export const Login = () => {
   const { signed } = useContext(Context);
 
   return (
-    <div className="login-page">
+    <div className="login-page h-screen w-screen">
       <div className="login-form">
         <LoginForm />
         { !signed ? null : <Navigate to='/home' /> }    
       </div>
-
     </div>
   )
 }

@@ -17,7 +17,7 @@ export const LoginForm = () => {
   return (
     <>
       <div 
-        className="text-center mt-16"
+        className="text-center mt-24"
         id='title'
       >
         <div className="flex items-center justify-center">
@@ -45,7 +45,7 @@ export const LoginForm = () => {
           id='login-card'
           className="w-full max-w-xl bg-white rounded-lg shadow-md p-6"
         >
-          <div className="flex flex-wrap -mx-3 mb-6">
+          <div className="flex flex-wrap -mx-3 mt-6 mb-6">
             <div className="w-full md:w-full px-3 mb-6">
               <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">Email address</label>
               <input
