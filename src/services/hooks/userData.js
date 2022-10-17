@@ -13,7 +13,7 @@ export const useUserData = () => {
       const users = firestore.collection('users').doc(user.uid);
       unsubscribe = users.onSnapshot((doc) => { setUsername(doc.data()?.username)});
     }
-    else { setUsername(null) };
+    else { setUsername(null) }
     
     return unsubscribe;
   }, [user]);

@@ -1,18 +1,49 @@
-// import { sendEmailVerification } from 'firebase/auth';
+import { sendEmailVerification } from 'firebase/auth';
 import React, { useContext, useState } from 'react';
-// import { useCreateUserWithEmailAndPassword } from 'react-firebase-hooks/auth';
-import { Link } from 'react-router-dom';
+import { useCreateUserWithEmailAndPassword } from 'react-firebase-hooks/auth';
+import { Link, Navigate } from 'react-router-dom';
 import { Context } from '../../context/context';
-// import { auth } from '../../services/firebase';
+import { auth } from '../../services/firebase';
 
 
 export const LoginForm = () => {
   const [ email, setEmail ] = useState('');
   const [ password, setPassword ] = useState('');
-
+  const { setUser } = useContext(Context);
+  
   const { 
     signInWithGoogle,
     signInWithFacebook } = useContext(Context);
+
+  const [
+    createUserWithEmailAndPassword,
+    user,
+    loading,
+    error,
+  ] = useCreateUserWithEmailAndPassword(auth, sendEmailVerification);
+
+
+  if (error) {
+    return (
+      <div>
+        <p>Error: { error.message }</p>
+      </div>
+    );
+  }
+  if (loading) {
+    return <p>Loading...</p>;
+  }
+
+  if (user) {
+    return (
+      <div>
+        {setUser(user.user)}
+        <p>Registered User: { user.email }</p>
+        <Navigate to='/home' />
+      </div>
+    );
+  }
+
 
   return (
     <>
@@ -60,13 +91,13 @@ export const LoginForm = () => {
             <div className="w-full md:w-full px-3 mb-6">
               <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">Password</label>
               <input 
-              className="appearance-none block w-full bg-white text-gray-900 font-medium border border-gray-400 rounded-lg py-3 px-3 leading-tight focus:outline-none"
-              type='password'
-              value={ password }
-              onChange={ (e) => {
-                setPassword(e.target.value);
-                console.log(password);
-              }}
+                className="appearance-none block w-full bg-white text-gray-900 font-medium border border-gray-400 rounded-lg py-3 px-3 leading-tight focus:outline-none"
+                type='password'
+                value={ password }
+                onChange={ (e) => {
+                  setPassword(e.target.value);
+                  console.log(password);
+                }}
               required />
             </div>
 
@@ -84,7 +115,12 @@ export const LoginForm = () => {
             </div>
 
             <div className="w-full md:w-full px-3 mb-6">
-              <button className="appearance-none block w-full bg-blue-600 text-gray-100 font-bold border border-gray-200 rounded-lg py-3 px-3 leading-tight hover:bg-blue-500 focus:outline-none focus:bg-white focus:border-gray-500">Sign in</button>
+              <button 
+                className="appearance-none block w-full bg-blue-600 text-gray-100 font-bold border border-gray-200 rounded-lg py-3 px-3 leading-tight hover:bg-blue-500 focus:outline-none focus:bg-white focus:border-gray-500"
+                onClick={ () => createUserWithEmailAndPassword(email, password) }
+              >
+                Register
+              </button>
             </div>
 
             <div className="mx-auto -mb-6 pb-1">
@@ -141,3 +177,57 @@ export const LoginForm = () => {
     </>
   )
 };
+
+// import { sendEmailVerification } from 'firebase/auth';
+// import { useState } from 'react';
+// import { useCreateUserWithEmailAndPassword } from 'react-firebase-hooks/auth';
+// import { auth } from '../../services/firebase';
+
+
+// export const LoginForm = () => {
+//   const [email, setEmail] = useState('');
+//   const [password, setPassword] = useState('');
+//   const [
+//     createUserWithEmailAndPassword,
+//     user,
+//     loading,
+//     error,
+//   ] = useCreateUserWithEmailAndPassword(auth, sendEmailVerification);
+
+//   if (error) {
+//     return (
+//       <div>
+//         <p>Error: { error.message }</p>
+//       </div>
+//     );
+//   }
+//   if (loading) {
+//     return <p>Loading...</p>;
+//   }
+//   if (user) {
+//     return (
+//       <div>
+//         <p>Registered User: { user.email }</p>
+//       </div>
+//     );
+//   }
+//   return (
+//     <div className='login-form'>
+//       <input
+//         type='email'
+//         placeholder='email'
+//         value={ email }
+//         onChange={ (e) => setEmail(e.target.value) }
+//       />
+//       <input
+//         type='password'
+//         placeholder='password'
+//         value={password}
+//         onChange={ (e) => setPassword(e.target.value) }
+//       />
+//       <button onClick={ () => createUserWithEmailAndPassword(email, password) }>
+//         Register
+//       </button>
+//     </div>
+//   );
+// };
