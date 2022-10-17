@@ -1,9 +1,9 @@
-import { sendEmailVerification } from 'firebase/auth';
-import { useContext, useState } from 'react';
-import { useCreateUserWithEmailAndPassword } from 'react-firebase-hooks/auth';
+// import { sendEmailVerification } from 'firebase/auth';
+import React, { useContext, useState } from 'react';
+// import { useCreateUserWithEmailAndPassword } from 'react-firebase-hooks/auth';
 import { Link } from 'react-router-dom';
 import { Context } from '../../context/context';
-import { auth } from '../../services/firebase';
+// import { auth } from '../../services/firebase';
 
 
 export const LoginForm = () => {

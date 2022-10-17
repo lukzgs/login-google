@@ -1,3 +1,4 @@
+import React from 'react';
 import { Provider } from "./context/provider";
 import { AppRoutes } from "./routes/routes";
 

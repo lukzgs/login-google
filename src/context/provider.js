@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import { GoogleAuthProvider } from "firebase/auth";
 import { FacebookAuthProvider } from "firebase/auth";
 
@@ -5,7 +6,7 @@ import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
 import 'firebase/compat/storage';
 
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from 'react';
 import { Navigate } from "react-router-dom";
 import { auth } from "../services/firebase";
 import { Context } from "./context"; 
@@ -17,7 +18,7 @@ export const Provider = ({ children }) => {
     const storageContent = () => {
       const sessionToken = localStorage.getItem('@AuthFirebase: token');
       const sessionUser = localStorage.getItem('@AuthFirebase: user');
-      if (sessionToken && sessionUser) { setUser(JSON.parse(sessionUser)) };
+      if (sessionToken && sessionUser) { setUser(JSON.parse(sessionUser)) }
     };
 
     storageContent();
