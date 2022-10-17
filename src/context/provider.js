@@ -29,6 +29,7 @@ export const Provider = ({ children }) => {
     try {
       const googleUserData = await auth.signInWithPopup(googleAuthProvider);
       const { credential:{ accessToken: token }, user } = googleUserData;
+      console.log(user)
       setUser(user);  
       localStorage.setItem('@Google: token', token);
       localStorage.setItem('@Google: user', JSON.stringify(user))
@@ -46,8 +47,8 @@ export const Provider = ({ children }) => {
   const signInWithFacebook = async () => {
     const facebookAuthProvider = new firebase.auth.FacebookAuthProvider();
     try {
-      const googleUserData = await auth.signInWithPopup(facebookAuthProvider);
-      const { credential:{ accessToken: token }, user } = googleUserData;
+      const facebookUserData = await auth.signInWithPopup(facebookAuthProvider);
+      const { credential:{ accessToken: token }, user } = facebookUserData;
       setUser(user);  
       localStorage.setItem('@Facebook: token', token);
       localStorage.setItem('@Facebook: user', JSON.stringify(user))

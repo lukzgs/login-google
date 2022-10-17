@@ -8,6 +8,7 @@ export const useUserData = () => {
 
   useEffect(() => {
     let unsubscribe;
+    // console.log(user)
 
     if (user) {
       const users = firestore.collection('users').doc(user.uid);

@@ -1,15 +1,20 @@
+/* eslint-disable react/prop-types */
 import { sendEmailVerification } from 'firebase/auth';
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useCallback, useEffect } from 'react';
 import { useCreateUserWithEmailAndPassword } from 'react-firebase-hooks/auth';
 import { Link, Navigate } from 'react-router-dom';
 import { Context } from '../../context/context';
-import { auth } from '../../services/firebase';
+import { auth, firestore } from '../../services/firebase';
+import debounce from 'lodash.debounce';
 
 
 export const LoginForm = () => {
   const [ email, setEmail ] = useState('');
   const [ password, setPassword ] = useState('');
   const { setUser } = useContext(Context);
+  // const [ setFormValue ] = useState('');
+  const [ isValid, setIsValid ] = useState(false);
+  const [ isLoading, setLoading ] = useState(false);
   
   const { 
     signInWithGoogle,
@@ -22,6 +27,51 @@ export const LoginForm = () => {
     error,
   ] = useCreateUserWithEmailAndPassword(auth, sendEmailVerification);
 
+  
+  useEffect(() => {
+    checkEmail(email);
+  }, [email]);
+
+  const onChangeEmail = (e) => {
+    const value = e.target.value.toLowerCase();
+    const regex = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+
+    // setFormValue(value);
+    setEmail(value);
+    setLoading(false);
+    setIsValid(false);
+
+    if (regex.test(value)) {
+      // setFormValue(value);
+      setEmail(value);
+
+      setLoading(true);
+      setIsValid(false);
+    }
+  };
+
+  const checkEmail = useCallback(
+    debounce(async (email) => {
+        const ref = firestore.doc(`users/${email}`);
+        const { exists } = await ref.get();
+        console.log('Firestore read executed!');
+        setIsValid(!exists);
+        setLoading(false);
+    }, 500),
+    []
+  );
+
+    function EmailAvalability ({ email, isValid, isLoading }) {
+      if (isLoading) {
+        return <p>Checking...</p>;
+      } else if (isValid) {
+        return <p className="text-success">{ email } is available!</p>;
+      } else if (email && !isValid) {
+        return <p className="text-danger">{ email } is taken!</p>;
+      } else {
+        return <p></p>;
+      }
+    }
 
   if (error) {
     return (
@@ -84,9 +134,15 @@ export const LoginForm = () => {
                 className="appearance-none block w-full bg-white text-gray-900 font-medium border border-gray-400 rounded-lg py-3 px-3 leading-tight focus:outline-none"
                 type='email'
                 value={ email }
-                onChange={ (e) => setEmail(e.target.value) }
+                onChange={ onChangeEmail }
                 required />
+              <EmailAvalability 
+                email={ email }
+                isValid={ isValid }
+                isLoading={ isLoading }
+            />
             </div>
+
 
             <div className="w-full md:w-full px-3 mb-6">
               <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">Password</label>
@@ -178,56 +234,123 @@ export const LoginForm = () => {
   )
 };
 
-// import { sendEmailVerification } from 'firebase/auth';
-// import { useState } from 'react';
-// import { useCreateUserWithEmailAndPassword } from 'react-firebase-hooks/auth';
-// import { auth } from '../../services/firebase';
+// import { useContext, useState, useEffect, useCallback } from "react"
+// import { Context } from "../../context/context"
+// import debounce from 'lodash.debounce';
+// import { firestore } from '../../services/firebase';
 
+// export const ChooseUsername = () => {
+//   const { 
+//     user, 
+//     username, 
+//     signOut } = useContext(Context);
+  
+//   const [ formValue, setFormValue ] = useState('');
+//   const [ isValid, setIsValid ] = useState(false);
+//   const [ loading, setLoading ] = useState(false);
 
-// export const LoginForm = () => {
-//   const [email, setEmail] = useState('');
-//   const [password, setPassword] = useState('');
-//   const [
-//     createUserWithEmailAndPassword,
-//     user,
-//     loading,
-//     error,
-//   ] = useCreateUserWithEmailAndPassword(auth, sendEmailVerification);
+//   useEffect(() => {
+//     checkUsername(formValue);
+//   }, [formValue]);
 
-//   if (error) {
-//     return (
-//       <div>
-//         <p>Error: { error.message }</p>
-//       </div>
+//     const onSubmit = async (e) => {
+//       e.preventDefault();
+//       const userRef = firestore.doc(`users/${user.uid}`);
+//       const usernameRef = firestore.doc(`usernames/${formValue}`);
+
+//       const batch = firestore.batch();
+//       batch.set(userRef, { 
+//         username: formValue,
+//         photoURL: user.photoURL,
+//         displayName: user.displayName,
+//       });
+//       batch.set(usernameRef, {
+//         uid: user.uid
+//       });
+
+//       await batch.commit();
+//     }
+
+//     const onChange = (e) => {
+//       const value = e.target.value.toLowerCase();
+//       const regex = /^(?=[a-zA-Z0-9._]{3,15}$)(?!.*[_.]{2})[^_.].*[^_.]$/;
+
+//       if (value.length < 3) {
+//         setFormValue(value);
+//         setLoading(false);
+//         setIsValid(false);
+//       }
+  
+//       if (regex.test(value)) {
+//         setFormValue(value);
+//         setLoading(true);
+//         setIsValid(false);
+//       }
+//     };
+  
+//     const checkUsername = useCallback(
+//       debounce(async (username) => {
+//         if (username.length >= 3) {
+//           const ref = firestore.doc(`usernames/${username}`);
+//           const { exists } = await ref.get();
+//           console.log('Firestore read executed!');
+//           setIsValid(!exists);
+//           setLoading(false);
+//         }
+//       }, 500),
+//       []
 //     );
-//   }
-//   if (loading) {
-//     return <p>Loading...</p>;
-//   }
-//   if (user) {
-//     return (
-//       <div>
-//         <p>Registered User: { user.email }</p>
-//       </div>
-//     );
-//   }
+
+//     function UsernameMsg ({ username, isValid, loading }) {
+//       if (loading) {
+//         return <p>Checking...</p>;
+//       } else if (isValid) {
+//         return <p className="text-success">{ username } is available!</p>;
+//       } else if (username && !isValid) {
+//         return <p className="text-danger">{ username } is taken!</p>;
+//       } else {
+//         return <p></p>;
+//       }
+//     }
+
 //   return (
-//     <div className='login-form'>
-//       <input
-//         type='email'
-//         placeholder='email'
-//         value={ email }
-//         onChange={ (e) => setEmail(e.target.value) }
-//       />
-//       <input
-//         type='password'
-//         placeholder='password'
-//         value={password}
-//         onChange={ (e) => setPassword(e.target.value) }
-//       />
-//       <button onClick={ () => createUserWithEmailAndPassword(email, password) }>
-//         Register
-//       </button>
-//     </div>
-//   );
-// };
+//     !username && (
+//       <section>
+//         <h3>Choose Username</h3>
+//         <form
+//           onSubmit={ onSubmit }
+//         >
+//           <input 
+//             name='username'
+//             placeholder='digite seu nome username'
+//             value={ formValue }
+//             onChange={ onChange }
+//           />
+//           <UsernameMsg 
+//             username={ formValue }
+//             isValid={ isValid }
+//             loading={ loading }
+//           />
+//           <button 
+//             type='submit'
+//             className='btnSubmit'
+//             disabled={ !isValid }
+//           >
+//             Submit
+//           </button>
+//           <h3>Debug State</h3>
+//           <div>
+//             Username: { formValue }
+//             <br />
+//             Loading: { loading.toString() }
+//             <br />
+//             Username Valid: { isValid.toString() }
+//           </div>
+//         </form>
+//         <button onClick={ () => signOut() }>
+//           Sign Out
+//         </button>
+//       </section>
+//     )
+//   )
+// }
