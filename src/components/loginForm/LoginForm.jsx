@@ -1,5 +1,4 @@
 /* eslint-disable react/prop-types */
-// import { sendEmailVerification } from 'firebase/auth';
 import { setDoc } from "firebase/firestore";
 
 import React, { useContext, useState, useCallback, useEffect } from 'react';
@@ -125,10 +124,9 @@ export const LoginForm = () => {
         <span className="text-sm"> 
           or
           <br/>
-          <Link to='/signup' className="text-blue-500">
+          <Link to='/register' className="text-blue-500">
             register a new account
           </Link> 
-
         </span>
       </div>
 

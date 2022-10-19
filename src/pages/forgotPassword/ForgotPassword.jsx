@@ -30,7 +30,7 @@ export const ForgotPassword = () => {
       <span className="text-sm"> 
         or
         <br/>
-        <Link to="/signup" className="text-blue-500">
+        <Link to="/register" className="text-blue-500">
           register a new account
         </Link> 
       </span>
