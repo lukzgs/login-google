@@ -1,10 +1,12 @@
 /* eslint-disable react/prop-types */
 import { sendEmailVerification } from 'firebase/auth';
+import { setDoc } from "firebase/firestore";
+
 import React, { useContext, useState, useCallback, useEffect } from 'react';
 import { useCreateUserWithEmailAndPassword } from 'react-firebase-hooks/auth';
 import { Link, Navigate } from 'react-router-dom';
 import { Context } from '../../context/context';
-import { auth, firestore } from '../../services/firebase';
+import { auth, firestore, db } from '../../services/firebase';
 import debounce from 'lodash.debounce';
 
 
@@ -12,9 +14,8 @@ export const LoginForm = () => {
   const [ email, setEmail ] = useState('');
   const [ password, setPassword ] = useState('');
   const { setUser } = useContext(Context);
-  // const [ setFormValue ] = useState('');
   const [ isValid, setIsValid ] = useState(false);
-  const [ isLoading, setLoading ] = useState(false);
+  const [ isLoading, setIsLoading ] = useState(false);
   
   const { 
     signInWithGoogle,
@@ -25,38 +26,51 @@ export const LoginForm = () => {
     user,
     loading,
     error,
-  ] = useCreateUserWithEmailAndPassword(auth, sendEmailVerification);
+  ] = useCreateUserWithEmailAndPassword(auth);
 
-  
+  console.log('db: ', db);
+  console.log('fire: ', firestore);
+
   useEffect(() => {
     checkEmail(email);
   }, [email]);
+  
+  const signUpAccount = async (email, password) => {
+    const newUser = createUserWithEmailAndPassword(email, password);
+    console.log('newuser:', newUser);
+    const userProfileRef = firestore.collection('users').doc( newUser.uid );
+    await setDoc(userProfileRef, { email });
+    await sendEmailVerification(newUser.user);
+    console.log('new user:', newUser);
+    console.log('ref: ', userProfileRef);
+
+  }
+
+  // const users = firestore.collection('users').doc(user.uid);
+
 
   const onChangeEmail = (e) => {
     const value = e.target.value.toLowerCase();
     const regex = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
-    // setFormValue(value);
     setEmail(value);
-    setLoading(false);
+    setIsLoading(true);
     setIsValid(false);
 
     if (regex.test(value)) {
-      // setFormValue(value);
       setEmail(value);
-
-      setLoading(true);
+      setIsLoading(true);
       setIsValid(false);
     }
   };
 
   const checkEmail = useCallback(
-    debounce(async (email) => {
-        const ref = firestore.doc(`users/${email}`);
-        const { exists } = await ref.get();
-        console.log('Firestore read executed!');
-        setIsValid(!exists);
-        setLoading(false);
+    debounce(async () => {
+      const ref = firestore.collection('users');
+      const { exists } = await ref.get();
+      console.log('Firestore read executed!');
+      setIsValid(!exists);
+      setIsLoading(false);
     }, 500),
     []
   );
@@ -87,7 +101,7 @@ export const LoginForm = () => {
   if (user) {
     return (
       <div>
-        {setUser(user.user)}
+        { setUser(user.user) }
         <p>Registered User: { user.email }</p>
         <Navigate to='/home' />
       </div>
@@ -136,11 +150,15 @@ export const LoginForm = () => {
                 value={ email }
                 onChange={ onChangeEmail }
                 required />
-              <EmailAvalability 
-                email={ email }
-                isValid={ isValid }
-                isLoading={ isLoading }
-            />
+              { email.length === 0 ? null :
+                <EmailAvalability 
+                  email={ email }
+                  isValid={ isValid }
+                  isLoading={ isLoading }
+                /> 
+    
+
+              }
             </div>
 
 
@@ -173,7 +191,7 @@ export const LoginForm = () => {
             <div className="w-full md:w-full px-3 mb-6">
               <button 
                 className="appearance-none block w-full bg-blue-600 text-gray-100 font-bold border border-gray-200 rounded-lg py-3 px-3 leading-tight hover:bg-blue-500 focus:outline-none focus:bg-white focus:border-gray-500"
-                onClick={ () => createUserWithEmailAndPassword(email, password) }
+                onClick={ () => signUpAccount(email, password) }
               >
                 Register
               </button>
