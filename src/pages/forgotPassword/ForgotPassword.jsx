@@ -61,7 +61,6 @@ export const ForgotPassword = () => {
               value={ password }
               onChange={ (e) => {
                 setPassword(e.target.value);
-                console.log(password);
               }}
               required />
             </div>

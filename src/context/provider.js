@@ -5,10 +5,12 @@ import { FacebookAuthProvider } from "firebase/auth";
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
 import 'firebase/compat/storage';
+import { setDoc } from "firebase/firestore";
+
 
 import React, { useEffect, useState } from 'react';
 import { Navigate } from "react-router-dom";
-import { auth } from "../services/firebase";
+import { auth, firestore } from "../services/firebase";
 import { Context } from "./context"; 
 
 export const Provider = ({ children }) => {
@@ -29,37 +31,71 @@ export const Provider = ({ children }) => {
     try {
       const googleUserData = await auth.signInWithPopup(googleAuthProvider);
       const { credential:{ accessToken: token }, user } = googleUserData;
-      console.log(user)
-      setUser(user);  
+      const { email, displayName } = user.multiFactor.user;
+      setUser(user);
+      const userProfileRef = firestore.collection('users').doc( user.uid );
+      await setDoc(userProfileRef, { 
+        email,
+        name: displayName,
+        username: null,
+        avatarPhoto: null,
+        createdAt: Date.now(),
+        status: 'pending',
+      });
       localStorage.setItem('@Google: token', token);
       localStorage.setItem('@Google: user', JSON.stringify(user))
     }
     catch (error) {
       const errorCode = error.code;
       const errorMessage = error.message;
-      const email = error.customData.email;
       const credential = GoogleAuthProvider.credentialFromError(error);
       console.error(error);
-      console.log(errorCode, errorMessage, email, credential);
+      console.log(errorCode, errorMessage, credential);
     }
   }
+
+  // const signUpAccount = async (email, password) => {
+  //   const newUser = await createUserWithEmailAndPassword(email, password);
+  //   console.log('newuser:', newUser);
+  //   const userProfileRef = firestore.collection('users').doc( newUser.uid );
+  //   console.log('user profile:', userProfileRef);
+  //   await setDoc(userProfileRef, { 
+  //     email,
+  //     name: null,
+  //     username: null,
+  //     avatarPhoto: null,
+  //     createdAt: Date.now(),
+  //     status: 'pending',
+  //   });
+  //   console.log('new user:', newUser);
+  //   console.log('ref: ', userProfileRef);
+  // }
 
   const signInWithFacebook = async () => {
     const facebookAuthProvider = new firebase.auth.FacebookAuthProvider();
     try {
       const facebookUserData = await auth.signInWithPopup(facebookAuthProvider);
       const { credential:{ accessToken: token }, user } = facebookUserData;
-      setUser(user);  
+      const { email, displayName } = user.multiFactor.user;
+      setUser(user);
+      const userProfileRef = firestore.collection('users').doc( user.uid );
+      await setDoc(userProfileRef, { 
+        email,
+        name: displayName,
+        username: null,
+        avatarPhoto: null,
+        createdAt: Date.now(),
+        status: 'pending',
+      });
       localStorage.setItem('@Facebook: token', token);
       localStorage.setItem('@Facebook: user', JSON.stringify(user))
     }
     catch (error) {
       const errorCode = error.code;
       const errorMessage = error.message;
-      const email = error.customData.email;
       const credential = FacebookAuthProvider.credentialFromError(error);
       console.error(error);
-      console.log(errorCode, errorMessage, email, credential);
+      console.log(errorCode, errorMessage, credential);
     }
   }
 

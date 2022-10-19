@@ -57,7 +57,6 @@ export const SignUp = () => {
               value={ password }
               onChange={ (e) => {
                 setPassword(e.target.value);
-                console.log(password);
               }}
               required />
             </div>

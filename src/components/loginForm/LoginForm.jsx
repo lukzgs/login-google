@@ -1,12 +1,12 @@
 /* eslint-disable react/prop-types */
-import { sendEmailVerification } from 'firebase/auth';
+// import { sendEmailVerification } from 'firebase/auth';
 import { setDoc } from "firebase/firestore";
 
 import React, { useContext, useState, useCallback, useEffect } from 'react';
 import { useCreateUserWithEmailAndPassword } from 'react-firebase-hooks/auth';
 import { Link, Navigate } from 'react-router-dom';
 import { Context } from '../../context/context';
-import { auth, firestore, db } from '../../services/firebase';
+import { auth, firestore } from '../../services/firebase';
 import debounce from 'lodash.debounce';
 
 
@@ -28,26 +28,23 @@ export const LoginForm = () => {
     error,
   ] = useCreateUserWithEmailAndPassword(auth);
 
-  console.log('db: ', db);
-  console.log('fire: ', firestore);
 
   useEffect(() => {
     checkEmail(email);
   }, [email]);
   
   const signUpAccount = async (email, password) => {
-    const newUser = createUserWithEmailAndPassword(email, password);
-    console.log('newuser:', newUser);
+    const newUser = await createUserWithEmailAndPassword(email, password);
     const userProfileRef = firestore.collection('users').doc( newUser.uid );
-    await setDoc(userProfileRef, { email });
-    await sendEmailVerification(newUser.user);
-    console.log('new user:', newUser);
-    console.log('ref: ', userProfileRef);
-
+    await setDoc(userProfileRef, { 
+      email,
+      name: null,
+      username: null,
+      avatarPhoto: null,
+      createdAt: Date.now(),
+      status: 'pending',
+    });
   }
-
-  // const users = firestore.collection('users').doc(user.uid);
-
 
   const onChangeEmail = (e) => {
     const value = e.target.value.toLowerCase();
@@ -102,7 +99,7 @@ export const LoginForm = () => {
     return (
       <div>
         { setUser(user.user) }
-        <p>Registered User: { user.email }</p>
+        <p>Registered User: { user.user.email }</p>
         <Navigate to='/home' />
       </div>
     );
@@ -170,7 +167,6 @@ export const LoginForm = () => {
                 value={ password }
                 onChange={ (e) => {
                   setPassword(e.target.value);
-                  console.log(password);
                 }}
               required />
             </div>
