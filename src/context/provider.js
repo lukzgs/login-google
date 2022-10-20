@@ -31,14 +31,14 @@ export const Provider = ({ children }) => {
     try {
       const googleUserData = await auth.signInWithPopup(googleAuthProvider);
       const { credential:{ accessToken: token }, user } = googleUserData;
-      const { email, displayName } = user.multiFactor.user;
+      const { email, displayName, photoURL } = user.multiFactor.user;
       setUser(user);
       const userProfileRef = firestore.collection('users').doc( user.uid );
       await setDoc(userProfileRef, { 
         email,
         name: displayName,
         username: null,
-        avatarPhoto: null,
+        avatarURL: photoURL,
         createdAt: Date.now(),
         status: 'pending',
       });
@@ -76,17 +76,18 @@ export const Provider = ({ children }) => {
     try {
       const facebookUserData = await auth.signInWithPopup(facebookAuthProvider);
       const { credential:{ accessToken: token }, user } = facebookUserData;
-      const { email, displayName } = user.multiFactor.user;
+      const { email, displayName, photoURL } = user.multiFactor.user;
       setUser(user);
       const userProfileRef = firestore.collection('users').doc( user.uid );
       await setDoc(userProfileRef, { 
         email,
         name: displayName,
         username: null,
-        avatarPhoto: null,
+        avatarURL: photoURL,
         createdAt: Date.now(),
         status: 'pending',
       });
+
       localStorage.setItem('@Facebook: token', token);
       localStorage.setItem('@Facebook: user', JSON.stringify(user))
     }

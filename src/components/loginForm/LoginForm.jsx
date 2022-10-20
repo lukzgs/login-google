@@ -1,108 +1,56 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
-import { setDoc } from "firebase/firestore";
-
-import React, { useContext, useState, useCallback, useEffect } from 'react';
-import { useCreateUserWithEmailAndPassword } from 'react-firebase-hooks/auth';
+import React, { useContext, useState} from 'react';
+import { useSignInWithEmailAndPassword } from 'react-firebase-hooks/auth';
 import { Link, Navigate } from 'react-router-dom';
 import { Context } from '../../context/context';
 import { auth, firestore } from '../../services/firebase';
-import debounce from 'lodash.debounce';
 
 
 export const LoginForm = () => {
+  const { user: usuario, setUser } = useContext(Context);
   const [ email, setEmail ] = useState('');
   const [ password, setPassword ] = useState('');
-  const { setUser } = useContext(Context);
-  const [ isValid, setIsValid ] = useState(false);
-  const [ isLoading, setIsLoading ] = useState(false);
   
   const { 
     signInWithGoogle,
     signInWithFacebook } = useContext(Context);
 
-  const [
-    createUserWithEmailAndPassword,
-    user,
-    loading,
-    error,
-  ] = useCreateUserWithEmailAndPassword(auth);
+    const [
+      signInWithEmailAndPassword,
+      user,
+      loading,
+      error,
+    ] = useSignInWithEmailAndPassword(auth);
 
-
-  useEffect(() => {
-    checkEmail(email);
-  }, [email]);
-  
-  const signUpAccount = async (email, password) => {
-    const newUser = await createUserWithEmailAndPassword(email, password);
-    const userProfileRef = firestore.collection('users').doc( newUser.uid );
-    await setDoc(userProfileRef, { 
-      email,
-      name: null,
-      username: null,
-      avatarPhoto: null,
-      createdAt: Date.now(),
-      status: 'pending',
-    });
-  }
-
-  const onChangeEmail = (e) => {
-    const value = e.target.value.toLowerCase();
-    const regex = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-
-    setEmail(value);
-    setIsLoading(true);
-    setIsValid(false);
-
-    if (regex.test(value)) {
-      setEmail(value);
-      setIsLoading(true);
-      setIsValid(false);
-    }
-  };
-
-  const checkEmail = useCallback(
-    debounce(async () => {
-      const ref = firestore.collection('users');
-      const { exists } = await ref.get();
-      console.log('Firestore read executed!');
-      setIsValid(!exists);
-      setIsLoading(false);
-    }, 500),
-    []
-  );
-
-    function EmailAvalability ({ email, isValid, isLoading }) {
-      if (isLoading) {
-        return <p>Checking...</p>;
-      } else if (isValid) {
-        return <p className="text-success">{ email } is available!</p>;
-      } else if (email && !isValid) {
-        return <p className="text-danger">{ email } is taken!</p>;
-      } else {
-        return <p></p>;
+    const loginAccount = async (email, password) => {
+      const loginUser = signInWithEmailAndPassword(email, password);
+      console.log(loginUser);
+      console.log(user);
+     
+      if (error) {
+        return (
+          <div>
+            <p>Error: {error.message}</p>
+          </div>
+        );
       }
+      
+      if (loading) {
+        return <p>Loading...</p>;
+      }
+
+      if (user) {
+        return (
+          <div>
+            <p>Signed In User: { user.email }</p>
+            <Navigate to='/home' /> ;
+          </div>
+        );
+      }
+      else { 'bugou' }
     }
 
-  if (error) {
-    return (
-      <div>
-        <p>Error: { error.message }</p>
-      </div>
-    );
-  }
-  if (loading) {
-    return <p>Loading...</p>;
-  }
-
-  if (user) {
-    return (
-      <div>
-        { setUser(user.user) }
-        <p>Registered User: { user.user.email }</p>
-        <Navigate to='/home' />
-      </div>
-    );
-  }
 
 
   return (
@@ -135,7 +83,7 @@ export const LoginForm = () => {
           id='login-card'
           className="w-full max-w-xl bg-white rounded-lg shadow-md p-6"
         >
-          <div className="flex flex-wrap -mx-3 mt-6 mb-6">
+          <div className="flex flex-wrap -mx-3 mt-6">
             <div className="w-full md:w-full px-3 mb-6">
               <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">Email address</label>
               <input
@@ -143,17 +91,9 @@ export const LoginForm = () => {
                 className="appearance-none block w-full bg-white text-gray-900 font-medium border border-gray-400 rounded-lg py-3 px-3 leading-tight focus:outline-none"
                 type='email'
                 value={ email }
-                onChange={ onChangeEmail }
-                required />
-              { email.length === 0 ? null :
-                <EmailAvalability 
-                  email={ email }
-                  isValid={ isValid }
-                  isLoading={ isLoading }
-                /> 
-    
-
-              }
+                onChange={ (e) => setEmail(e.target.value) }
+                required 
+              />
             </div>
 
 
@@ -163,9 +103,7 @@ export const LoginForm = () => {
                 className="appearance-none block w-full bg-white text-gray-900 font-medium border border-gray-400 rounded-lg py-3 px-3 leading-tight focus:outline-none"
                 type='password'
                 value={ password }
-                onChange={ (e) => {
-                  setPassword(e.target.value);
-                }}
+                onChange={ (e) => setPassword(e.target.value) }
               required />
             </div>
 
@@ -185,9 +123,9 @@ export const LoginForm = () => {
             <div className="w-full md:w-full px-3 mb-6">
               <button 
                 className="appearance-none block w-full bg-blue-600 text-gray-100 font-bold border border-gray-200 rounded-lg py-3 px-3 leading-tight hover:bg-blue-500 focus:outline-none focus:bg-white focus:border-gray-500"
-                onClick={ () => signUpAccount(email, password) }
+                onClick={ () => loginAccount(email, password) }
               >
-                Register
+                Login
               </button>
             </div>
 
@@ -196,7 +134,7 @@ export const LoginForm = () => {
             </div>
            
             <div className="flex items-center w-full mt-2">
-              <div className="w-full md:w-1/3 px-3 pt-4 mx-2 border-t border-gray-400">
+              <div className="w-full md:w-1/3 px-3 pt-6 mx-2 border-t border-gray-400">
                 <button
                   id='btn-google'
                   onClick={ () => signInWithGoogle() }
@@ -218,7 +156,7 @@ export const LoginForm = () => {
                 </button>
               </div>
 
-              <div className="w-full md:w-1/3 px-3 pt-4 mx-2">
+              <div className="w-full md:w-1/3 px-3 pt-6 mx-2">
                 <button
                   id='btn-facebook'
                   onClick={ () => signInWithFacebook() }
@@ -231,7 +169,7 @@ export const LoginForm = () => {
                 </button>
               </div>
 
-              <div className="w-full md:w-1/3 px-3 pt-4 mx-2 border-t border-gray-400">
+              <div className="w-full md:w-1/3 px-3 pt-6 mx-2 border-t border-gray-400">
                 <button className="appearance-none flex items-center justify-center w-full bg-gray-100 text-gray-700 shadow border border-gray-500 rounded-lg py-3 px-3 leading-tight hover:bg-gray-200 hover:text-gray-700 focus:outline-none">
                   <svg className="h-6 w-6 fill-current text-gray-700" viewBox="0 0 512 512">
                     <path d="M496,109.5a201.8,201.8,0,0,1-56.55,15.3,97.51,97.51,0,0,0,43.33-53.6,197.74,197.74,0,0,1-62.56,23.5A99.14,99.14,0,0,0,348.31,64c-54.42,0-98.46,43.4-98.46,96.9a93.21,93.21,0,0,0,2.54,22.1,280.7,280.7,0,0,1-203-101.3A95.69,95.69,0,0,0,36,130.4C36,164,53.53,193.7,80,211.1A97.5,97.5,0,0,1,35.22,199v1.2c0,47,34,86.1,79,95a100.76,100.76,0,0,1-25.94,3.4,94.38,94.38,0,0,1-18.51-1.8c12.51,38.5,48.92,66.5,92.05,67.3A199.59,199.59,0,0,1,39.5,405.6,203,203,0,0,1,16,404.2,278.68,278.68,0,0,0,166.74,448c181.36,0,280.44-147.7,280.44-275.8,0-4.2-.11-8.4-.31-12.5A198.48,198.48,0,0,0,496,109.5Z"/>
@@ -245,124 +183,3 @@ export const LoginForm = () => {
     </>
   )
 };
-
-// import { useContext, useState, useEffect, useCallback } from "react"
-// import { Context } from "../../context/context"
-// import debounce from 'lodash.debounce';
-// import { firestore } from '../../services/firebase';
-
-// export const ChooseUsername = () => {
-//   const { 
-//     user, 
-//     username, 
-//     signOut } = useContext(Context);
-  
-//   const [ formValue, setFormValue ] = useState('');
-//   const [ isValid, setIsValid ] = useState(false);
-//   const [ loading, setLoading ] = useState(false);
-
-//   useEffect(() => {
-//     checkUsername(formValue);
-//   }, [formValue]);
-
-//     const onSubmit = async (e) => {
-//       e.preventDefault();
-//       const userRef = firestore.doc(`users/${user.uid}`);
-//       const usernameRef = firestore.doc(`usernames/${formValue}`);
-
-//       const batch = firestore.batch();
-//       batch.set(userRef, { 
-//         username: formValue,
-//         photoURL: user.photoURL,
-//         displayName: user.displayName,
-//       });
-//       batch.set(usernameRef, {
-//         uid: user.uid
-//       });
-
-//       await batch.commit();
-//     }
-
-//     const onChange = (e) => {
-//       const value = e.target.value.toLowerCase();
-//       const regex = /^(?=[a-zA-Z0-9._]{3,15}$)(?!.*[_.]{2})[^_.].*[^_.]$/;
-
-//       if (value.length < 3) {
-//         setFormValue(value);
-//         setLoading(false);
-//         setIsValid(false);
-//       }
-  
-//       if (regex.test(value)) {
-//         setFormValue(value);
-//         setLoading(true);
-//         setIsValid(false);
-//       }
-//     };
-  
-//     const checkUsername = useCallback(
-//       debounce(async (username) => {
-//         if (username.length >= 3) {
-//           const ref = firestore.doc(`usernames/${username}`);
-//           const { exists } = await ref.get();
-//           console.log('Firestore read executed!');
-//           setIsValid(!exists);
-//           setLoading(false);
-//         }
-//       }, 500),
-//       []
-//     );
-
-//     function UsernameMsg ({ username, isValid, loading }) {
-//       if (loading) {
-//         return <p>Checking...</p>;
-//       } else if (isValid) {
-//         return <p className="text-success">{ username } is available!</p>;
-//       } else if (username && !isValid) {
-//         return <p className="text-danger">{ username } is taken!</p>;
-//       } else {
-//         return <p></p>;
-//       }
-//     }
-
-//   return (
-//     !username && (
-//       <section>
-//         <h3>Choose Username</h3>
-//         <form
-//           onSubmit={ onSubmit }
-//         >
-//           <input 
-//             name='username'
-//             placeholder='digite seu nome username'
-//             value={ formValue }
-//             onChange={ onChange }
-//           />
-//           <UsernameMsg 
-//             username={ formValue }
-//             isValid={ isValid }
-//             loading={ loading }
-//           />
-//           <button 
-//             type='submit'
-//             className='btnSubmit'
-//             disabled={ !isValid }
-//           >
-//             Submit
-//           </button>
-//           <h3>Debug State</h3>
-//           <div>
-//             Username: { formValue }
-//             <br />
-//             Loading: { loading.toString() }
-//             <br />
-//             Username Valid: { isValid.toString() }
-//           </div>
-//         </form>
-//         <button onClick={ () => signOut() }>
-//           Sign Out
-//         </button>
-//       </section>
-//     )
-//   )
-// }

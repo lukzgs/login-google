@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 import { setDoc } from "firebase/firestore";
 
@@ -30,33 +31,47 @@ export const Register = () => {
   }, [email]);
   
   const signUpAccount = async (email, password) => {
-    const newUser = await createUserWithEmailAndPassword(email, password);
+    const newUser = createUserWithEmailAndPassword(email, password);
     const userProfileRef = firestore.collection('users').doc( newUser.uid );
     await setDoc(userProfileRef, { 
       email,
-      name: name,
-      username: username,
+      name: null,
+      username: null,
       avatarPhoto: null,
       createdAt: Date.now(),
       status: 'pending',
     });
   }
 
-  // TO DO
-  const onChangeUsername = (e) => {
-    const value = e.target.value.toLowerCase();
-    const regex = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+  // TO DO:
+  // FAZER A PARTE DE USERNAME E FULL NAME
+  // const onChangeUsername = (e) => {
+  //   const value = e.target.value.toLowerCase();
+  //   const regex = /^[a-zA-Z0-9]+$/;
 
-    setUsername(value);
-    setIsLoading(true);
-    setIsValid(false);
+  //   setUsername(value);
+  //   setIsLoading(true);
+  //   setIsValid(false);
 
-    if (regex.test(value)) {
-      setUsername(value);
-      setIsLoading(true);
-      setIsValid(false);
-    }
-  };
+  //   if (regex.test(value)) {
+  //     setUsername(value);
+  //     setIsLoading(true);
+  //     setIsValid(false);
+  //   }
+  // };
+
+  // const onChangeName = (e) => {
+  //   const value = e.target.value.toLowerCase();
+  //   const regex = /^[a-zA-Z-]+$/;
+
+  //   setName(value);
+  //   setIsValid(false);
+
+  //   if (regex.test(value)) {
+  //     setName(value);
+  //     setIsValid(false);
+  //   }
+  // };
 
   const onChangeEmail = (e) => {
     const value = e.target.value.toLowerCase();
@@ -84,13 +99,13 @@ export const Register = () => {
     []
   );
 
-    function EmailAvalability ({ email, isValid, isLoading }) {
+    function Avalability ({ value, isValid, isLoading }) {
       if (isLoading) {
         return <p>Checking...</p>;
       } else if (isValid) {
-        return <p className="text-success">{ email } is available!</p>;
-      } else if (email && !isValid) {
-        return <p className="text-danger">{ email } is taken!</p>;
+        return <p className="text-success">{ value } is available!</p>;
+      } else if (value && !isValid) {
+        return <p className="text-danger">{ value } is taken!</p>;
       } else {
         return <p></p>;
       }
@@ -153,15 +168,16 @@ export const Register = () => {
                 className="appearance-none block w-full bg-white text-gray-900 font-medium border border-gray-400 rounded-lg py-3 px-3 leading-tight focus:outline-none"
                 type='username'
                 value={ username }
-                onChange={ onChangeUsername }
-                required />
-              { email.length === 0 ? null :
-                <EmailAvalability 
-                  email={ username }
+                // onChange={ onChangeUsername }
+                // required 
+              />
+              {/* { username.length === 0 ? null :
+                <Avalability 
+                  value={ username }
                   isValid={ isValid }
                   isLoading={ isLoading }
                 /> 
-              }
+              } */}
             </div>
 
             <div className="w-full md:w-full px-3 mb-6">
@@ -169,17 +185,11 @@ export const Register = () => {
               <input
                 id='name'
                 className="appearance-none block w-full bg-white text-gray-900 font-medium border border-gray-400 rounded-lg py-3 px-3 leading-tight focus:outline-none"
-                type='fullname'
+                type='Full name'
                 value={ name }
-                onChange={ setName }
-                required />
-              { email.length === 0 ? null :
-                <EmailAvalability 
-                  email={ name }
-                  isValid={ isValid }
-                  isLoading={ isLoading }
-                /> 
-              }
+                // onChange={ onChangeName }
+                // required 
+              />
             </div>
 
             <div className="w-full md:w-full px-3 mb-6">
@@ -192,7 +202,7 @@ export const Register = () => {
                 onChange={ onChangeEmail }
                 required />
               { email.length === 0 ? null :
-                <EmailAvalability 
+                <Avalability 
                   email={ email }
                   isValid={ isValid }
                   isLoading={ isLoading }
