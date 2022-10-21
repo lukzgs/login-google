@@ -1,14 +1,23 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
+import { collection, getDocs, getFirestore } from "firebase/firestore";
+import { signInWithEmailAndPassword } from "firebase/auth";
+
+
 import React, { useContext, useState} from 'react';
-import { useSignInWithEmailAndPassword } from 'react-firebase-hooks/auth';
+import { 
+  useSignInWithEmailAndPassword, 
+  Auth, 
+  UserCredential, 
+  AuthError 
+} from 'react-firebase-hooks/auth';
 import { Link, Navigate } from 'react-router-dom';
 import { Context } from '../../context/context';
-import { auth, firestore } from '../../services/firebase';
+import { auth, firestore, db } from '../../services/firebase';
 
 
 export const LoginForm = () => {
-  const { user: usuario, setUser } = useContext(Context);
+  const { user, setUser } = useContext(Context);
   const [ email, setEmail ] = useState('');
   const [ password, setPassword ] = useState('');
   
@@ -16,42 +25,66 @@ export const LoginForm = () => {
     signInWithGoogle,
     signInWithFacebook } = useContext(Context);
 
-    const [
-      signInWithEmailAndPassword,
-      user,
-      loading,
-      error,
-    ] = useSignInWithEmailAndPassword(auth);
+  // const [
+  //   signInWithEmailAndPassword,
+  //   user,
+  //   loading,
+  //   error,
+  // ] = useSignInWithEmailAndPassword(auth);
 
-    const loginAccount = async (email, password) => {
-      const loginUser = signInWithEmailAndPassword(email, password);
-      console.log(loginUser);
-      console.log(user);
-     
-      if (error) {
-        return (
-          <div>
-            <p>Error: {error.message}</p>
-          </div>
-        );
-      }
-      
-      if (loading) {
-        return <p>Loading...</p>;
-      }
+  // very important
+  const getAllUsersFromDatabase = async () => {
+    firestore.collection('users').get().then((snapshot) => {
+      snapshot.docs.forEach( doc => {
+        console.log(doc.data().email)
+      })
+    })
+    // const usersRef = firestore.collection('users');
+    // const usersDoc = (await usersRef.get()).docs;
+    // console.log(usersRef);
+    // return usersDoc
+  } 
 
-      if (user) {
-        return (
-          <div>
-            <p>Signed In User: { user.email }</p>
-            <Navigate to='/home' /> ;
-          </div>
-        );
-      }
-      else { 'bugou' }
+  const getAllUsersFromDatabaseNew = async () => {
+    const db = getFirestore();
+    const usersRef = collection(db, 'users');    
+    getDocs(usersRef)
+      .then((snapshot) => {
+        let users = [];
+        snapshot.docs.forEach((doc) => {
+          users.push({ ...doc.data() });
+        })
+        console.log(users);
+        return users;
+    });
+  } 
+
+  // this function should be in backend
+  const getEmailRealtime = async () => {
+    const usersRef = collection(db, 'users');    
+    let emails = [];
+
+    await getDocs(usersRef)
+      .then((snapshot) => {
+        snapshot.docs.forEach((doc) => {
+          emails.push(doc.data().email);
+        })
+      });
+
+    const isThere = emails.find((e) => e === email);
+    if (isThere) return console.log(true);
+    else console.log(false);
+  } 
+
+  const loginAccount = (email, password) => {
+    try {
+      const loginUser = signInWithEmailAndPassword(email, password)
+        .then((cred) => console.log(cred.user));
     }
-
-
+    catch(error) {
+      console.error(error);
+    }
+  }
 
   return (
     <>
@@ -90,7 +123,6 @@ export const LoginForm = () => {
                 id='email'
                 className="appearance-none block w-full bg-white text-gray-900 font-medium border border-gray-400 rounded-lg py-3 px-3 leading-tight focus:outline-none"
                 type='email'
-                value={ email }
                 onChange={ (e) => setEmail(e.target.value) }
                 required 
               />
@@ -102,7 +134,6 @@ export const LoginForm = () => {
               <input 
                 className="appearance-none block w-full bg-white text-gray-900 font-medium border border-gray-400 rounded-lg py-3 px-3 leading-tight focus:outline-none"
                 type='password'
-                value={ password }
                 onChange={ (e) => setPassword(e.target.value) }
               required />
             </div>
@@ -124,6 +155,8 @@ export const LoginForm = () => {
               <button 
                 className="appearance-none block w-full bg-blue-600 text-gray-100 font-bold border border-gray-200 rounded-lg py-3 px-3 leading-tight hover:bg-blue-500 focus:outline-none focus:bg-white focus:border-gray-500"
                 onClick={ () => loginAccount(email, password) }
+                // onClick={ () => getEmailRealtime() }
+
               >
                 Login
               </button>

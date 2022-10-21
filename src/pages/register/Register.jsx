@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
-import { setDoc } from "firebase/firestore";
+import { setDoc, getDoc } from "firebase/firestore";
 
 import React, { useContext, useState, useCallback, useEffect } from 'react';
 import { useCreateUserWithEmailAndPassword } from 'react-firebase-hooks/auth';
@@ -31,16 +31,19 @@ export const Register = () => {
   }, [email]);
   
   const signUpAccount = async (email, password) => {
-    const newUser = createUserWithEmailAndPassword(email, password);
-    const userProfileRef = firestore.collection('users').doc( newUser.uid );
-    await setDoc(userProfileRef, { 
-      email,
-      name: null,
-      username: null,
-      avatarPhoto: null,
-      createdAt: Date.now(),
-      status: 'pending',
-    });
+    try{
+      const newUser = await createUserWithEmailAndPassword(email, password);
+      const userProfileRef = firestore.collection('users').doc( newUser.uid );
+      await setDoc(userProfileRef, { 
+        email,
+        name: null,
+        username: null,
+        avatarPhoto: null,
+        createdAt: Date.now(),
+        status: 'pending',
+      });
+    }
+    catch(error) { console.log(error) }    
   }
 
   // TO DO:
@@ -167,7 +170,6 @@ export const Register = () => {
                 id='username'
                 className="appearance-none block w-full bg-white text-gray-900 font-medium border border-gray-400 rounded-lg py-3 px-3 leading-tight focus:outline-none"
                 type='username'
-                value={ username }
                 // onChange={ onChangeUsername }
                 // required 
               />
@@ -186,7 +188,6 @@ export const Register = () => {
                 id='name'
                 className="appearance-none block w-full bg-white text-gray-900 font-medium border border-gray-400 rounded-lg py-3 px-3 leading-tight focus:outline-none"
                 type='Full name'
-                value={ name }
                 // onChange={ onChangeName }
                 // required 
               />
@@ -198,7 +199,6 @@ export const Register = () => {
                 id='email'
                 className="appearance-none block w-full bg-white text-gray-900 font-medium border border-gray-400 rounded-lg py-3 px-3 leading-tight focus:outline-none"
                 type='email'
-                value={ email }
                 onChange={ onChangeEmail }
                 required />
               { email.length === 0 ? null :
@@ -215,7 +215,6 @@ export const Register = () => {
               <input 
                 className="appearance-none block w-full bg-white text-gray-900 font-medium border border-gray-400 rounded-lg py-3 px-3 leading-tight focus:outline-none"
                 type='password'
-                value={ password }
                 onChange={ (e) => {
                   setPassword(e.target.value);
                 }}
