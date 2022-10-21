@@ -1,16 +1,18 @@
 /* eslint-disable react/prop-types */
-import { GoogleAuthProvider } from "firebase/auth";
-import { FacebookAuthProvider } from "firebase/auth";
+import { 
+  GoogleAuthProvider,
+  FacebookAuthProvider,
+  signInWithPopup,
+  signOut
+} from 'firebase/auth';
 
-import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
 import 'firebase/compat/storage';
-import { setDoc } from "firebase/firestore";
-
+import { serverTimestamp, setDoc } from "firebase/firestore";
 
 import React, { useEffect, useState } from 'react';
 import { Navigate } from "react-router-dom";
-import { auth, firestore } from "../services/firebase";
+import { firestore, auth } from "../services/firebase";
 import { Context } from "./context"; 
 
 export const Provider = ({ children }) => {
@@ -27,19 +29,21 @@ export const Provider = ({ children }) => {
   }, []);
 
   const signInWithGoogle = async () => {
-    const googleAuthProvider = new firebase.auth.GoogleAuthProvider();
+    const googleProvider = new GoogleAuthProvider();
     try {
-      const googleUserData = await auth.signInWithPopup(googleAuthProvider);
-      const { credential:{ accessToken: token }, user } = googleUserData;
-      const { email, displayName, photoURL } = user.multiFactor.user;
+      const result = await signInWithPopup(auth, googleProvider);
+      const { user, 
+        user: { accessToken: token, email, displayName, photoURL, uid } 
+      } = result;
+
       setUser(user);
-      const userProfileRef = firestore.collection('users').doc( user.uid );
+      const userProfileRef = firestore.collection('users').doc(uid);
       await setDoc(userProfileRef, { 
         email,
         name: displayName,
         username: null,
         avatarURL: photoURL,
-        createdAt: Date.now(),
+        createdAt: serverTimestamp(),
         status: 'pending',
       });
       localStorage.setItem('@Google: token', token);
@@ -72,19 +76,20 @@ export const Provider = ({ children }) => {
   // }
 
   const signInWithFacebook = async () => {
-    const facebookAuthProvider = new firebase.auth.FacebookAuthProvider();
+    const facebookProvider = new FacebookAuthProvider();
     try {
-      const facebookUserData = await auth.signInWithPopup(facebookAuthProvider);
-      const { credential:{ accessToken: token }, user } = facebookUserData;
-      const { email, displayName, photoURL } = user.multiFactor.user;
+      const result = await signInWithPopup(auth, facebookProvider);
+      const { user, 
+        user: { accessToken: token, email, displayName, photoURL, uid } 
+      } = result;
       setUser(user);
-      const userProfileRef = firestore.collection('users').doc( user.uid );
+      const userProfileRef = firestore.collection('users').doc(uid);
       await setDoc(userProfileRef, { 
         email,
         name: displayName,
         username: null,
         avatarURL: photoURL,
-        createdAt: Date.now(),
+        createdAt: serverTimestamp(),
         status: 'pending',
       });
 
@@ -119,8 +124,8 @@ export const Provider = ({ children }) => {
   //   }
   // }
 
-  const signOut = () => {
-    auth.signOut();
+  const signingOut = () => {
+    signOut(auth);
     localStorage.clear();
     setUser(null);
     return <Navigate to='/' />
@@ -132,7 +137,7 @@ export const Provider = ({ children }) => {
     signInWithGoogle,
     signInWithFacebook,
     // signInWithGithub,
-    signOut,
+    signingOut,
     signed: !!user,
   }
 
