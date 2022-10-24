@@ -1,14 +1,18 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
-import { setDoc, getDoc } from "firebase/firestore";
-
 import React, { useContext, useState, useCallback, useEffect } from 'react';
-import { useCreateUserWithEmailAndPassword } from 'react-firebase-hooks/auth';
 import { Navigate } from 'react-router-dom';
 import { Context } from '../../context/context';
-import { auth, firestore } from '../../services/firebase';
-import debounce from 'lodash.debounce';
+import { auth, firestore, db } from '../../services/firebase';
 
+import debounce from 'lodash.debounce';
+import { 
+  addDoc, setDoc, getDoc, getDocs,
+  collection, onSnapshot, serverTimestamp } from 'firebase/firestore';
+
+import {
+  createUserWithEmailAndPassword,
+} from 'firebase/auth';
 
 export const Register = () => {
   const [ name, setName ] = useState('');
@@ -19,33 +23,88 @@ export const Register = () => {
   const [ isValid, setIsValid ] = useState(false);
   const [ isLoading, setIsLoading ] = useState(false);
   
-  const [
-    createUserWithEmailAndPassword,
-    user,
-    loading,
-    error,
-  ] = useCreateUserWithEmailAndPassword(auth);
-
   useEffect(() => {
     checkEmail(email);
   }, [email]);
-  
-  const signUpAccount = async (email, password) => {
-    try{
-      const newUser = await createUserWithEmailAndPassword(email, password);
-      const userProfileRef = firestore.collection('users').doc( newUser.uid );
-      await setDoc(userProfileRef, { 
-        email,
-        name: null,
-        username: null,
-        avatarPhoto: null,
-        createdAt: Date.now(),
-        status: 'pending',
-      });
+ 
+  const signUpAccount = async (e) => {
+    e.preventDefault();
+    try {
+      const result = await createUserWithEmailAndPassword(auth, email, password);
+      if (result) {
+        const { user, 
+          user: { accessToken: token, email: userEmail, displayName, photoURL, uid } 
+        } = result;
+        setUser(user);
+        const usersRef = collection(db, 'users');    
+        await addDoc(usersRef, {
+          email: userEmail,
+          name: null,
+          username: null,
+          avatarURL: null,
+          createdAt: serverTimestamp(),
+          status: 'pending',
+        })
+      }      
     }
-    catch(error) { console.log(error) }    
+    catch(error) {
+      console.error(error);
+    }    
   }
 
+    // try {
+    //   const result = await createUserWithEmailAndPassword(auth , userEmail, userPassword)
+    //   .then((cred) => {
+    //     console.log('new user: ', cred.user);
+    //   });
+    //   console.log(result);
+    //   const { user, 
+    //     user: { accessToken: token, email, displayName, photoURL, uid } 
+    //   } = result;
+
+      // console.log(user);
+      // const userProfileRef = firestore.collection('users').doc( result.uid );
+      // await setDoc(userProfileRef, { 
+      //   email,
+      //   name: null,
+      //   username: null,
+      //   avatarPhoto: null,
+      //   createdAt: Date.now(),
+      //   status: 'pending',
+      // });
+    // }
+    // catch(error) { console.log(error) }    
+
+
+  // const signInWithGoogle = async () => {
+  //   const googleProvider = new GoogleAuthProvider();
+  //   try {
+  //     const result = await signInWithPopup(auth, googleProvider);
+  //     const { user, 
+  //       user: { accessToken: token, email, displayName, photoURL, uid } 
+  //     } = result;
+
+  //     setUser(user);
+  //     const userProfileRef = firestore.collection('users').doc(uid);
+  //     await setDoc(userProfileRef, { 
+  //       email,
+  //       name: displayName,
+  //       username: null,
+  //       avatarURL: photoURL,
+  //       createdAt: serverTimestamp(),
+  //       status: 'pending',
+  //     });
+  //     localStorage.setItem('@Google: token', token);
+  //     localStorage.setItem('@Google: user', JSON.stringify(user))
+  //   }
+  //   catch (error) {
+  //     const errorCode = error.code;
+  //     const errorMessage = error.message;
+  //     const credential = GoogleAuthProvider.credentialFromError(error);
+  //     console.error(error);
+  //     console.log(errorCode, errorMessage, credential);
+  //   }
+  // }
   // TO DO:
   // FAZER A PARTE DE USERNAME E FULL NAME
   // const onChangeUsername = (e) => {
@@ -76,20 +135,20 @@ export const Register = () => {
   //   }
   // };
 
-  const onChangeEmail = (e) => {
-    const value = e.target.value.toLowerCase();
-    const regex = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+  // const onChangeEmail = (e) => {
+  //   const value = e.target.value.toLowerCase();
+  //   const regex = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
-    setEmail(value);
-    setIsLoading(true);
-    setIsValid(false);
+  //   setEmail(value);
+  //   setIsLoading(true);
+  //   setIsValid(false);
 
-    if (regex.test(value)) {
-      setEmail(value);
-      setIsLoading(true);
-      setIsValid(false);
-    }
-  };
+  //   if (regex.test(value)) {
+  //     setEmail(value);
+  //     setIsLoading(true);
+  //     setIsValid(false);
+  //   }
+  // };
 
   const checkEmail = useCallback(
     debounce(async () => {
@@ -102,38 +161,38 @@ export const Register = () => {
     []
   );
 
-    function Avalability ({ value, isValid, isLoading }) {
-      if (isLoading) {
-        return <p>Checking...</p>;
-      } else if (isValid) {
-        return <p className="text-success">{ value } is available!</p>;
-      } else if (value && !isValid) {
-        return <p className="text-danger">{ value } is taken!</p>;
-      } else {
-        return <p></p>;
-      }
-    }
+  //   function Avalability ({ value, isValid, isLoading }) {
+  //     if (isLoading) {
+  //       return <p>Checking...</p>;
+  //     } else if (isValid) {
+  //       return <p className="text-success">{ value } is available!</p>;
+  //     } else if (value && !isValid) {
+  //       return <p className="text-danger">{ value } is taken!</p>;
+  //     } else {
+  //       return <p></p>;
+  //     }
+  //   }
 
-  if (error) {
-    return (
-      <div>
-        <p>Error: { error.message }</p>
-      </div>
-    );
-  }
-  if (loading) {
-    return <p>Loading...</p>;
-  }
+  // if (error) {
+  //   return (
+  //     <div>
+  //       <p>Error: { error.message }</p>
+  //     </div>
+  //   );
+  // }
+  // if (loading) {
+  //   return <p>Loading...</p>;
+  // }
 
-  if (user) {
-    return (
-      <div>
-        { setUser(user.user) }
-        <p>Registered User: { user.user.email }</p>
-        <Navigate to='/home' />
-      </div>
-    );
-  }
+  // if (user) {
+  //   return (
+  //     <div>
+  //       { setUser(user.user) }
+  //       <p>Registered User: { user.user.email }</p>
+  //       <Navigate to='/home' />
+  //     </div>
+  //   );
+  // }
 
 
   return (
@@ -199,15 +258,17 @@ export const Register = () => {
                 id='email'
                 className="appearance-none block w-full bg-white text-gray-900 font-medium border border-gray-400 rounded-lg py-3 px-3 leading-tight focus:outline-none"
                 type='email'
-                onChange={ onChangeEmail }
+                onChange={ (e) => {
+                  setEmail(e.target.value);
+                }}
                 required />
-              { email.length === 0 ? null :
+              {/* { email.length === 0 ? null :
                 <Avalability 
                   email={ email }
                   isValid={ isValid }
                   isLoading={ isLoading }
                 /> 
-              }
+              } */}
             </div>
 
             <div className="w-full md:w-full px-3 mb-6">
@@ -232,7 +293,7 @@ export const Register = () => {
             <div className="w-full md:w-full px-3 mb-6">
               <button 
                 className="appearance-none block w-full bg-blue-600 text-gray-100 font-bold border border-gray-200 rounded-lg py-3 px-3 leading-tight hover:bg-blue-500 focus:outline-none focus:bg-white focus:border-gray-500"
-                onClick={ () => signUpAccount(email, password) }
+                onClick= { (e) => { signUpAccount(e) } }
               >
                 Register
               </button>
