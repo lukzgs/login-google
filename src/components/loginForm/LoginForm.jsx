@@ -1,20 +1,14 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
-import { collection, getDocs, getFirestore } from "firebase/firestore";
-import { signInWithEmailAndPassword } from "firebase/auth";
-
-
-import React, { useContext, useState} from 'react';
+import React, { useContext, useState } from 'react';
+import { collection, getDocs, onSnapshot } from "firebase/firestore";
 import { 
-  useSignInWithEmailAndPassword, 
-  Auth, 
-  UserCredential, 
-  AuthError 
-} from 'react-firebase-hooks/auth';
+  signInWithEmailAndPassword
+ } from 'firebase/auth';
+
 import { Link, Navigate } from 'react-router-dom';
 import { Context } from '../../context/context';
 import { auth, firestore, db } from '../../services/firebase';
-
 
 export const LoginForm = () => {
   const { user, setUser } = useContext(Context);
@@ -23,14 +17,8 @@ export const LoginForm = () => {
   
   const { 
     signInWithGoogle,
-    signInWithFacebook } = useContext(Context);
-
-  // const [
-  //   signInWithEmailAndPassword,
-  //   user,
-  //   loading,
-  //   error,
-  // ] = useSignInWithEmailAndPassword(auth);
+    signInWithFacebook,
+  } = useContext(Context);
 
   // very important
   const getAllUsersFromDatabase = async () => {
@@ -39,14 +27,9 @@ export const LoginForm = () => {
         console.log(doc.data().email)
       })
     })
-    // const usersRef = firestore.collection('users');
-    // const usersDoc = (await usersRef.get()).docs;
-    // console.log(usersRef);
-    // return usersDoc
   } 
 
   const getAllUsersFromDatabaseNew = async () => {
-    const db = getFirestore();
     const usersRef = collection(db, 'users');    
     getDocs(usersRef)
       .then((snapshot) => {
@@ -76,10 +59,15 @@ export const LoginForm = () => {
     else console.log(false);
   } 
 
-  const loginAccount = (email, password) => {
+  const loginAccount = async (e) => {
+    e.preventDefault();
+    console.log(auth);
     try {
-      const loginUser = signInWithEmailAndPassword(email, password)
-        .then((cred) => console.log(cred.user));
+      const result = await signInWithEmailAndPassword(auth, email, password);
+      const { user, 
+        user: { accessToken: token, email: userEmail, displayName, photoURL, uid } 
+      } = result;
+      setUser(user);
     }
     catch(error) {
       console.error(error);
@@ -154,9 +142,7 @@ export const LoginForm = () => {
             <div className="w-full md:w-full px-3 mb-6">
               <button 
                 className="appearance-none block w-full bg-blue-600 text-gray-100 font-bold border border-gray-200 rounded-lg py-3 px-3 leading-tight hover:bg-blue-500 focus:outline-none focus:bg-white focus:border-gray-500"
-                onClick={ () => loginAccount(email, password) }
-                // onClick={ () => getEmailRealtime() }
-
+                onClick={ (e) => loginAccount(e) }
               >
                 Login
               </button>
