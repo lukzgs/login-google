@@ -11,7 +11,7 @@ import { Context } from '../../context/context';
 import { auth, firestore, db } from '../../services/firebase';
 
 export const LoginForm = () => {
-  const { user, setUser } = useContext(Context);
+  const { setUser } = useContext(Context);
   const [ email, setEmail ] = useState('');
   const [ password, setPassword ] = useState('');
   
