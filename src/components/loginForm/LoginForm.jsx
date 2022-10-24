@@ -61,7 +61,6 @@ export const LoginForm = () => {
 
   const loginAccount = async (e) => {
     e.preventDefault();
-    console.log(auth);
     try {
       const result = await signInWithEmailAndPassword(auth, email, password);
       const { user, 
