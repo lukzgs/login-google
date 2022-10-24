@@ -3,7 +3,7 @@ import {
   GoogleAuthProvider,
   FacebookAuthProvider,
   signInWithPopup,
-  signOut
+  signOut,
 } from 'firebase/auth';
 
 import 'firebase/compat/auth';
@@ -35,7 +35,7 @@ export const Provider = ({ children }) => {
       const { user, 
         user: { accessToken: token, email, displayName, photoURL, uid } 
       } = result;
-
+      console.log(result);
       setUser(user);
       const userProfileRef = firestore.collection('users').doc(uid);
       await setDoc(userProfileRef, { 
@@ -58,23 +58,6 @@ export const Provider = ({ children }) => {
     }
   }
 
-  // const signUpAccount = async (email, password) => {
-  //   const newUser = await createUserWithEmailAndPassword(email, password);
-  //   console.log('newuser:', newUser);
-  //   const userProfileRef = firestore.collection('users').doc( newUser.uid );
-  //   console.log('user profile:', userProfileRef);
-  //   await setDoc(userProfileRef, { 
-  //     email,
-  //     name: null,
-  //     username: null,
-  //     avatarPhoto: null,
-  //     createdAt: Date.now(),
-  //     status: 'pending',
-  //   });
-  //   console.log('new user:', newUser);
-  //   console.log('ref: ', userProfileRef);
-  // }
-
   const signInWithFacebook = async () => {
     const facebookProvider = new FacebookAuthProvider();
     try {
@@ -82,6 +65,7 @@ export const Provider = ({ children }) => {
       const { user, 
         user: { accessToken: token, email, displayName, photoURL, uid } 
       } = result;
+      console.log(result);
       setUser(user);
       const userProfileRef = firestore.collection('users').doc(uid);
       await setDoc(userProfileRef, { 
@@ -92,7 +76,6 @@ export const Provider = ({ children }) => {
         createdAt: serverTimestamp(),
         status: 'pending',
       });
-
       localStorage.setItem('@Facebook: token', token);
       localStorage.setItem('@Facebook: user', JSON.stringify(user))
     }
