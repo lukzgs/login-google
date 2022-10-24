@@ -8,10 +8,11 @@ import { auth, firestore, db } from '../../services/firebase';
 import debounce from 'lodash.debounce';
 import { 
   addDoc, setDoc, getDoc, getDocs,
-  collection, onSnapshot, serverTimestamp } from 'firebase/firestore';
+  collection, onSnapshot, serverTimestamp 
+} from 'firebase/firestore';
 
 import {
-  createUserWithEmailAndPassword,
+  createUserWithEmailAndPassword, sendEmailVerification,
 } from 'firebase/auth';
 
 export const Register = () => {
@@ -26,17 +27,20 @@ export const Register = () => {
   useEffect(() => {
     checkEmail(email);
   }, [email]);
- 
   const signUpAccount = async (e) => {
     e.preventDefault();
     try {
       const result = await createUserWithEmailAndPassword(auth, email, password);
+      console.log(result.error);
+      console.log(result.user);
+
       if (result) {
         const { user, 
           user: { accessToken: token, email: userEmail, displayName, photoURL, uid } 
         } = result;
         setUser(user);
-        const usersRef = collection(db, 'users');    
+        const usersRef = collection(db, 'users');
+        console.log(result);
         await addDoc(usersRef, {
           email: userEmail,
           name: null,
@@ -45,66 +49,15 @@ export const Register = () => {
           createdAt: serverTimestamp(),
           status: 'pending',
         })
-      }      
+        localStorage.setItem('@Facebook: token', token);
+        localStorage.setItem('@Facebook: user', JSON.stringify(user))
+      }
     }
     catch(error) {
       console.error(error);
     }    
   }
 
-    // try {
-    //   const result = await createUserWithEmailAndPassword(auth , userEmail, userPassword)
-    //   .then((cred) => {
-    //     console.log('new user: ', cred.user);
-    //   });
-    //   console.log(result);
-    //   const { user, 
-    //     user: { accessToken: token, email, displayName, photoURL, uid } 
-    //   } = result;
-
-      // console.log(user);
-      // const userProfileRef = firestore.collection('users').doc( result.uid );
-      // await setDoc(userProfileRef, { 
-      //   email,
-      //   name: null,
-      //   username: null,
-      //   avatarPhoto: null,
-      //   createdAt: Date.now(),
-      //   status: 'pending',
-      // });
-    // }
-    // catch(error) { console.log(error) }    
-
-
-  // const signInWithGoogle = async () => {
-  //   const googleProvider = new GoogleAuthProvider();
-  //   try {
-  //     const result = await signInWithPopup(auth, googleProvider);
-  //     const { user, 
-  //       user: { accessToken: token, email, displayName, photoURL, uid } 
-  //     } = result;
-
-  //     setUser(user);
-  //     const userProfileRef = firestore.collection('users').doc(uid);
-  //     await setDoc(userProfileRef, { 
-  //       email,
-  //       name: displayName,
-  //       username: null,
-  //       avatarURL: photoURL,
-  //       createdAt: serverTimestamp(),
-  //       status: 'pending',
-  //     });
-  //     localStorage.setItem('@Google: token', token);
-  //     localStorage.setItem('@Google: user', JSON.stringify(user))
-  //   }
-  //   catch (error) {
-  //     const errorCode = error.code;
-  //     const errorMessage = error.message;
-  //     const credential = GoogleAuthProvider.credentialFromError(error);
-  //     console.error(error);
-  //     console.log(errorCode, errorMessage, credential);
-  //   }
-  // }
   // TO DO:
   // FAZER A PARTE DE USERNAME E FULL NAME
   // const onChangeUsername = (e) => {
