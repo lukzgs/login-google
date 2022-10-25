@@ -1,8 +1,28 @@
-import React, { useContext } from "react"
+import React, { useContext, useEffect } from "react"
+import { Navigate } from "react-router-dom";
 import { Context } from "../../context/context"
+import { auth } from '../../services/firebase';
+import { signOut } from 'firebase/auth';
 
 export const Home = () => {
-  const { user, signingOut } = useContext(Context);
+  const { user, setUser } = useContext(Context);
+
+  useEffect(() => {
+    const storageContent = () => {
+      const localToken = localStorage.getItem('@AuthFirebase: token');
+      const localUser = localStorage.getItem('@AuthFirebase: user');
+      if (localToken && localUser) { setUser(JSON.parse(localUser)) }
+    };
+
+    storageContent();
+  }, []);
+
+  const signingOut = () => {
+    signOut(auth);
+    localStorage.clear();
+    setUser(null);
+    return <Navigate to='/' />
+  }
 
   return (
     <>

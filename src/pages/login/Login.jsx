@@ -1,9 +1,15 @@
 /* eslint-disable no-unused-vars */
 import React, { useContext, useState } from 'react';
 import { Link, Navigate } from 'react-router-dom';
-import { Context } from "../../context/context"
-import { signInWithEmailAndPassword } from 'firebase/auth';
-import { auth } from '../../services/firebase';
+import { Context } from '../../context/context';
+import { firestore, auth } from '../../services/firebase';
+import { 
+  signInWithEmailAndPassword,
+  GoogleAuthProvider,
+  FacebookAuthProvider,
+  signInWithPopup,
+} from 'firebase/auth';
+import { serverTimestamp, setDoc } from 'firebase/firestore';
 
 export const Login = () => {
   const { signed } = useContext(Context);
@@ -11,17 +17,18 @@ export const Login = () => {
   const [ email, setEmail ] = useState('');
   const [ password, setPassword ] = useState('');
   
-  const { 
-    signInWithGoogle,
-    signInWithFacebook,
-  } = useContext(Context);
-
   const loginAccount = async (e) => {
     e.preventDefault();
     try {
       const result = await signInWithEmailAndPassword(auth, email, password);
       const { user, 
-        user: { accessToken: token, email: userEmail, displayName, photoURL, uid } 
+        user: { 
+          accessToken: token,
+          email: userEmail,
+          displayName,
+          photoURL,
+          uid,
+        }
       } = result;
       setUser(user);
     }
@@ -29,6 +36,85 @@ export const Login = () => {
       console.error(error);
     }
   }
+
+  const signInWithGoogle = async () => {
+    const googleProvider = new GoogleAuthProvider();
+    try {
+      const result = await signInWithPopup(auth, googleProvider);
+      const { user, 
+        user: { accessToken: token, email, displayName, photoURL, uid } 
+      } = result;
+      console.log(result);
+      setUser(user);
+      const userProfileRef = firestore.collection('users').doc(uid);
+      await setDoc(userProfileRef, { 
+        email,
+        name: displayName,
+        username: null,
+        avatarURL: photoURL,
+        createdAt: serverTimestamp(),
+        status: 'pending',
+      });
+      localStorage.setItem('@Google: token', token);
+      localStorage.setItem('@Google: user', JSON.stringify(user))
+    }
+    catch (error) {
+      const errorCode = error.code;
+      const errorMessage = error.message;
+      const credential = GoogleAuthProvider.credentialFromError(error);
+      console.error(error);
+      console.log(errorCode, errorMessage, credential);
+    }
+  }
+
+  const signInWithFacebook = async () => {
+    const facebookProvider = new FacebookAuthProvider();
+    try {
+      const result = await signInWithPopup(auth, facebookProvider);
+      const { user, 
+        user: { accessToken: token, email, displayName, photoURL, uid } 
+      } = result;
+      console.log(result);
+      setUser(user);
+      const userProfileRef = firestore.collection('users').doc(uid);
+      await setDoc(userProfileRef, { 
+        email,
+        name: displayName,
+        username: null,
+        avatarURL: photoURL,
+        createdAt: serverTimestamp(),
+        status: 'pending',
+      });
+      localStorage.setItem('@Facebook: token', token);
+      localStorage.setItem('@Facebook: user', JSON.stringify(user))
+    }
+    catch (error) {
+      const errorCode = error.code;
+      const errorMessage = error.message;
+      const credential = FacebookAuthProvider.credentialFromError(error);
+      console.error(error);
+      console.log(errorCode, errorMessage, credential);
+    }
+  }
+
+  // const signInWithGithub = async () => {
+  //   const githubAuthProvider = new firebase.auth.GithubAuthProvider();
+  //   try {
+  //     const googleUserData = await auth.signInWithPopup(githubAuthProvider);
+  //     const { credential:{ accessToken: token }, user } = googleUserData;
+  //     setUser(user);  
+  //     localStorage.setItem('@Github: token', token);
+  //     localStorage.setItem('@Github: user', JSON.stringify(user))
+  //   }
+  //   catch (error) {
+  //     const errorCode = error.code;
+  //     const errorMessage = error.message;
+  //     const email = error.customData.email;
+  //     const credential = FacebookAuthProvider.credentialFromError(error);
+  //     console.error(error);
+  //     console.log(errorCode, errorMessage, email, credential);
+  //   }
+  // }
 
   return (
     <div className="login-page h-screen w-screen">
