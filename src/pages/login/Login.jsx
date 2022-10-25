@@ -242,7 +242,6 @@ export const Login = () => {
           </div>
         </form>
       </div>
-        {/* <LoginForm /> */}
         { !signed ? null : <Navigate to='/home' /> }    
       </div>
     </div>
