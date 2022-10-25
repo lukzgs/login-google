@@ -9,16 +9,14 @@ import {
   FacebookAuthProvider,
   signInWithPopup,
 } from 'firebase/auth';
-import { serverTimestamp, setDoc } from 'firebase/firestore';
+import { addDoc, serverTimestamp, setDoc } from 'firebase/firestore';
+import { FormInput } from '../../components/formInput/FormInput';
 
 export const Login = () => {
   const { signed } = useContext(Context);
   const { setUser } = useContext(Context);
-  const [ email, setEmail ] = useState('');
-  const [ password, setPassword ] = useState('');
-  
-  const loginAccount = async (e) => {
-    e.preventDefault();
+
+  const loginAccount = async (email, password) => {
     try {
       const result = await signInWithEmailAndPassword(auth, email, password);
       const { user, 
@@ -116,6 +114,14 @@ export const Login = () => {
   //   }
   // }
 
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const loginData = new FormData(e.target);
+    const email = Object.fromEntries(loginData.entries()).email;
+    const password = Object.fromEntries(loginData.entries()).password;
+    loginAccount(email, password)
+  }
+
   return (
     <div className="login-page h-screen w-screen">
       <div className="login-form">
@@ -142,13 +148,16 @@ export const Login = () => {
         </span>
       </div>
 
-      <div className="flex justify-center my-2 mx-4 md:mx-0">
+      <div
+        id='login-card'
+        className="flex justify-center my-2 mx-4 md:mx-0"
+      >
         <form 
-          id='login-card'
           className="w-full max-w-xl bg-white rounded-lg shadow-md p-6"
+          onSubmit={ handleSubmit }
         >
           <div className="flex flex-wrap -mx-3 mt-6">
-            <div className="w-full md:w-full px-3 mb-6">
+            {/* <div className="w-full md:w-full px-3 mb-6">
               <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">Email address</label>
               <input
                 id='email'
@@ -157,17 +166,47 @@ export const Login = () => {
                 onChange={ (e) => setEmail(e.target.value) }
                 required 
               />
-            </div>
+            </div> */}
+
+            <FormInput 
+              name='email'
+              div={{ className: "w-full md:w-full px-3 mb-6" }}
+              label={{ 
+                className: "block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2",
+                description: 'Email adress'
+              }}
+              input={{
+                id: 'email',
+                className: 'appearance-none block w-full bg-white text-gray-900 font-medium border border-gray-400 rounded-lg py-3 px-3 leading-tight focus:outline-none',
+                type: 'email',
+                required: true
+              }}              
+            />
+
+            <FormInput 
+              name='password'
+              div={{ className: 'w-full md:w-full px-3 mb-6' }}
+              label={{ 
+                className: 'block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2',
+                description: 'Password'
+              }}
+              input={{
+                className: 'appearance-none block w-full bg-white text-gray-900 font-medium border border-gray-400 rounded-lg py-3 px-3 leading-tight focus:outline-none',
+                type: 'password',
+                required: true
+              }}              
+            />
 
 
-            <div className="w-full md:w-full px-3 mb-6">
+
+            {/* <div className="w-full md:w-full px-3 mb-6">
               <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">Password</label>
               <input 
                 className="appearance-none block w-full bg-white text-gray-900 font-medium border border-gray-400 rounded-lg py-3 px-3 leading-tight focus:outline-none"
                 type='password'
                 onChange={ (e) => setPassword(e.target.value) }
               required />
-            </div>
+            </div> */}
 
             <div className="w-full flex items-center justify-between px-3 mb-3 ">
               <label className="flex items-center w-1/2">
@@ -185,9 +224,17 @@ export const Login = () => {
             <div className="w-full md:w-full px-3 mb-6">
               <button 
                 className="appearance-none block w-full bg-blue-600 text-gray-100 font-bold border border-gray-200 rounded-lg py-3 px-3 leading-tight hover:bg-blue-500 focus:outline-none focus:bg-white focus:border-gray-500"
-                onClick={ (e) => loginAccount(e) }
+                // onClick={ (e) => loginAccount(e) }
               >
                 Login
+              </button>
+            </div>
+
+            <div className="w-full md:w-full px-3 mb-6">
+              <button 
+                className="appearance-none block w-full bg-blue-600 text-gray-100 font-bold border border-gray-200 rounded-lg py-3 px-3 leading-tight hover:bg-blue-500 focus:outline-none focus:bg-white focus:border-gray-500"
+              >
+                submit
               </button>
             </div>
 
