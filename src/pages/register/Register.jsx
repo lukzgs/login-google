@@ -1,9 +1,9 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
-import React, { useContext, useState, useCallback, useEffect } from 'react';
+import React, { useContext } from 'react';
 import { Navigate } from 'react-router-dom';
 import { Context } from '../../context/context';
-import { auth, firestore, db } from '../../services/firebase';
+import { auth, db } from '../../services/firebase';
 
 import debounce from 'lodash.debounce';
 import { 
@@ -13,44 +13,55 @@ import {
 
 import {
   createUserWithEmailAndPassword, sendEmailVerification,
-} from 'firebase/auth';
+} from 'firebase/auth'; 
+import { FormInput } from '../../components/formInput/FormInput';
+import { GenericButton } from '../../components/btns/GenericButton';
+
 
 export const Register = () => {
-  const [ name, setName ] = useState('');
-  const [ username, setUsername ] = useState('');
-  const [ email, setEmail ] = useState('');
-  const [ password, setPassword ] = useState('');
-  const { setUser } = useContext(Context);
-  const [ isValid, setIsValid ] = useState(false);
-  const [ isLoading, setIsLoading ] = useState(false);
-  
-  useEffect(() => {
-    checkEmail(email);
-  }, [email]);
-  const signUpAccount = async (e) => {
-    e.preventDefault();
+  // const [ name, setName ] = useState('');
+  // const [ username, setUsername ] = useState('');
+  // const [ email, setEmail ] = useState('');
+  // const [ password, setPassword ] = useState('');
+  const { setUser, signed } = useContext(Context);
+  // const [ isValid, setIsValid ] = useState(false);
+  // const [ isLoading, setIsLoading ] = useState(false);
+
+  // useEffect(() => {
+  //   checkEmail(email);
+  // }, [email]);
+
+const handleSubmit = (e) => {
+  e.preventDefault();
+  const loginData = new FormData(e.target);
+  const username = Object.fromEntries(loginData.entries()).username;
+  const fullName = Object.fromEntries(loginData.entries()).fullName;
+  const email = Object.fromEntries(loginData.entries()).email;
+  const password = Object.fromEntries(loginData.entries()).password;
+  const form = { username, fullName, email, password }
+  signUpAccount(form);
+}
+
+  const signUpAccount = async (data) => {
+    const { username, fullName, email, password } = data;
     try {
       const result = await createUserWithEmailAndPassword(auth, email, password);
-      console.log(result.error);
-      console.log(result.user);
-
       if (result) {
         const { user, 
           user: { accessToken: token, email: userEmail, displayName, photoURL, uid } 
         } = result;
         setUser(user);
         const usersRef = collection(db, 'users');
-        console.log(result);
         await addDoc(usersRef, {
-          email: userEmail,
-          name: null,
-          username: null,
+          email,
+          name: fullName,
+          username: username,
           avatarURL: null,
           createdAt: serverTimestamp(),
           status: 'pending',
         })
-        localStorage.setItem('@Facebook: token', token);
-        localStorage.setItem('@Facebook: user', JSON.stringify(user))
+        localStorage.setItem('@Logged: token', token);
+        localStorage.setItem('@Logged: user', JSON.stringify(user))
       }
     }
     catch(error) {
@@ -77,10 +88,7 @@ export const Register = () => {
 
   // const onChangeName = (e) => {
   //   const value = e.target.value.toLowerCase();
-  //   const regex = /^[a-zA-Z-]+$/;
-
-  //   setName(value);
-  //   setIsValid(false);
+  //   const regex = /^[a-zA-Z]+ [a-zA-Z]+$/;
 
   //   if (regex.test(value)) {
   //     setName(value);
@@ -103,157 +111,136 @@ export const Register = () => {
   //   }
   // };
 
-  const checkEmail = useCallback(
-    debounce(async () => {
-      const ref = firestore.collection('users');
-      const { exists } = await ref.get();
-      console.log('Firestore read executed!');
-      setIsValid(!exists);
-      setIsLoading(false);
-    }, 500),
-    []
-  );
+  // const checkEmail = useCallback(
+  //   debounce(async () => {
+  //     const ref = firestore.collection('users');
+  //     const { exists } = await ref.get();
+  //     // console.log('ref', ref);
 
-  //   function Avalability ({ value, isValid, isLoading }) {
-  //     if (isLoading) {
-  //       return <p>Checking...</p>;
-  //     } else if (isValid) {
-  //       return <p className="text-success">{ value } is available!</p>;
-  //     } else if (value && !isValid) {
-  //       return <p className="text-danger">{ value } is taken!</p>;
-  //     } else {
-  //       return <p></p>;
-  //     }
-  //   }
-
-  // if (error) {
-  //   return (
-  //     <div>
-  //       <p>Error: { error.message }</p>
-  //     </div>
-  //   );
-  // }
-  // if (loading) {
-  //   return <p>Loading...</p>;
-  // }
-
-  // if (user) {
-  //   return (
-  //     <div>
-  //       { setUser(user.user) }
-  //       <p>Registered User: { user.user.email }</p>
-  //       <Navigate to='/home' />
-  //     </div>
-  //   );
-  // }
-
+  //     // console.log('Firestore read executed!');
+  //     setIsValid(!exists);
+  //     setIsLoading(false);
+  //   }, 500),
+  //   []
+  // );
 
   return (
-    <>
-      <div 
-        className="text-center mt-24"
-        id='title'
-      >
-        <div className="flex items-center justify-center">
-          <svg fill="none" viewBox="0 0 24 24" className="w-12 h-12 text-blue-500" stroke="currentColor">
-            <path strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
-          </svg>
+    <div className='login-page flex items-center justify-center'>
+      <div className='login-landpage'>
+        <div 
+          className='text-center mt-24'
+          id='title'
+        >
+          <div className='flex items-center justify-center'>
+            <svg fill='none' viewBox='0 0 24 24' className='w-12 h-12 text-blue-500' stroke='currentColor'>
+              <path strokeLinejoin='round' strokeWidth='2' d='M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z'/>
+            </svg>
+          </div>
+
+          <h2 className='text-4xl tracking-tight'>
+            Register your account
+          </h2>
         </div>
 
-        <h2 className="text-4xl tracking-tight">
-          Register your account
-        </h2>
-
-        <br />
-        <br />
-      </div>
-
-      <div className="flex justify-center my-2 mx-4 md:mx-0">
-        <form 
-          id='login-card'
-          className="w-full max-w-xl bg-white rounded-lg shadow-md p-6"
+        <div
+          id='register-card'
+          className='max-w-xl rounded-lg shadow-md px-6 pt-12 pb-6 md:mx-0 mx-4 mt-16'
         >
-          <div className="flex flex-wrap -mx-3 mt-6 mb-6">
-            {/* to do */}
-
-            <div className="w-full md:w-full px-3 mb-6">
-              <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">Username</label>
-              <input
-                id='username'
-                className="appearance-none block w-full bg-white text-gray-900 font-medium border border-gray-400 rounded-lg py-3 px-3 leading-tight focus:outline-none"
-                type='username'
-                // onChange={ onChangeUsername }
-                // required 
-              />
-              {/* { username.length === 0 ? null :
-                <Avalability 
-                  value={ username }
-                  isValid={ isValid }
-                  isLoading={ isLoading }
-                /> 
-              } */}
-            </div>
-
-            <div className="w-full md:w-full px-3 mb-6">
-              <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">Full Name</label>
-              <input
-                id='name'
-                className="appearance-none block w-full bg-white text-gray-900 font-medium border border-gray-400 rounded-lg py-3 px-3 leading-tight focus:outline-none"
-                type='Full name'
-                // onChange={ onChangeName }
-                // required 
-              />
-            </div>
-
-            <div className="w-full md:w-full px-3 mb-6">
-              <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">Email address</label>
-              <input
-                id='email'
-                className="appearance-none block w-full bg-white text-gray-900 font-medium border border-gray-400 rounded-lg py-3 px-3 leading-tight focus:outline-none"
-                type='email'
-                onChange={ (e) => {
-                  setEmail(e.target.value);
+          <form
+            id='register-form'
+            className='w-full max-w-xl rounded-lg pr-6 pl-6'
+            onSubmit={ handleSubmit }
+          >
+            <div
+              id='form-and-register-btn'
+              className='flex flex-wrap -mx-3'
+            >
+              <FormInput
+                name='username'
+                div={{
+                  id: 'username-register-form',
+                  className: 'w-full md:w-full px-3 mb-6',
                 }}
-                required />
-              {/* { email.length === 0 ? null :
-                <Avalability 
-                  email={ email }
-                  isValid={ isValid }
-                  isLoading={ isLoading }
-                /> 
-              } */}
-            </div>
-
-            <div className="w-full md:w-full px-3 mb-6">
-              <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">Password</label>
-              <input 
-                className="appearance-none block w-full bg-white text-gray-900 font-medium border border-gray-400 rounded-lg py-3 px-3 leading-tight focus:outline-none"
-                type='password'
-                onChange={ (e) => {
-                  setPassword(e.target.value);
+                label= {{
+                  className: 'block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2',
+                  description: 'Username'
                 }}
-              required />
-            </div>
+                input={{
+                  id: 'username-input',
+                  className: 'appearance-none block w-full bg-white text-gray-900 font-medium border border-gray-400 rounded-lg py-3 px-3 leading-tight focus:outline-none',
+                  type: 'text'
+                }}
+              />
 
-            <div className="w-full flex items-center justify-between px-3 mb-3 ">
-              <label className="flex items-center w-1/2">
-              </label>
-              <div>
-                <br />
-              </div>
-            </div>
+              <FormInput
+                name='fullName'
+                div={{
+                  id: 'fullName-register-form',
+                  className: 'w-full md:w-full px-3 mb-6',
+                }}
+                label= {{
+                  className: 'block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2',
+                  description: 'Full Name'
+                }}
+                input={{
+                  id: 'fullName-input',
+                  className: 'appearance-none block w-full bg-white text-gray-900 font-medium border border-gray-400 rounded-lg py-3 px-3 leading-tight focus:outline-none',
+                  type: 'text'
+                }}
+              />
 
-            <div className="w-full md:w-full px-3 mb-6">
-              <button 
-                className="appearance-none block w-full bg-blue-600 text-gray-100 font-bold border border-gray-200 rounded-lg py-3 px-3 leading-tight hover:bg-blue-500 focus:outline-none focus:bg-white focus:border-gray-500"
-                onClick= { (e) => { signUpAccount(e) } }
-              >
-                Register
-              </button>
+              <FormInput
+                name='email'
+                div={{
+                  id: 'email-register-form',
+                  className: 'w-full md:w-full px-3 mb-6',
+                }}
+                label= {{
+                  className: 'block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2',
+                  description: 'Email Adress'
+                }}
+                input={{
+                  id: 'email-input',
+                  className: 'appearance-none block w-full bg-white text-gray-900 font-medium border border-gray-400 rounded-lg py-3 px-3 leading-tight focus:outline-none',
+                  type: 'email',
+                  required: true
+                }}
+              />
+
+              <FormInput
+                name='password'
+                div={{
+                  id: 'password-register-form',
+                  className: 'w-full md:w-full px-3 mb-6',
+                }}
+                label= {{
+                  className: 'block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2',
+                  description: 'Password'
+                }}
+                input={{
+                  id: 'password-input',
+                  className: 'appearance-none block w-full bg-white text-gray-900 font-medium border border-gray-400 rounded-lg py-3 px-3 leading-tight focus:outline-none',
+                  type: 'password',
+                  required: true
+                }}
+              />
+
+              <GenericButton 
+                div={{ 
+                  id:'register-btn',
+                  className: 'w-full md:w-full px-3'
+                }}
+                button={{ 
+                  id: 'register-btn-input',
+                  className: 'appearance-none block w-full bg-blue-600 text-gray-100 font-bold border border-gray-200 rounded-lg py-3 px-3 leading-tight hover:bg-blue-500 focus:outline-none focus:bg-white focus:border-gray-500',
+                  description: 'Register'
+                }}              
+              />
             </div>
-          </div>
-        </form>
+          </form>
+        </div>
+        { !signed ? null : <Navigate to='/home' /> }
       </div>
-    </>
+    </div>
   )
 };
