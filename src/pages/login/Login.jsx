@@ -7,17 +7,26 @@ import {
   signInWithEmailAndPassword,
   GoogleAuthProvider,
   FacebookAuthProvider,
+  GithubAuthProvider ,
   signInWithPopup,
 } from 'firebase/auth';
 import { addDoc, serverTimestamp, setDoc } from 'firebase/firestore';
 import { FormInput } from '../../components/formInput/FormInput';
-import { Button } from '../../components/btns/Button';
+import { GenericButton } from '../../components/btns/GenericButton';
 
 export const Login = () => {
   const { signed } = useContext(Context);
   const { setUser } = useContext(Context);
 
-  const loginAccount = async (email, password) => {
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const loginData = new FormData(e.target);
+    const email = Object.fromEntries(loginData.entries()).email;
+    const password = Object.fromEntries(loginData.entries()).password;
+    loginWithEmailAndPassword(email, password);
+  }
+
+  const loginWithEmailAndPassword = async (email, password) => {
     try {
       const result = await signInWithEmailAndPassword(auth, email, password);
       const { user, 
@@ -72,7 +81,6 @@ export const Login = () => {
       const { user, 
         user: { accessToken: token, email, displayName, photoURL, uid } 
       } = result;
-      console.log(result);
       setUser(user);
       const userProfileRef = firestore.collection('users').doc(uid);
       await setDoc(userProfileRef, { 
@@ -95,33 +103,36 @@ export const Login = () => {
     }
   }
 
-  // const signInWithGithub = async () => {
-  //   const githubAuthProvider = new firebase.auth.GithubAuthProvider();
-  //   try {
-  //     const googleUserData = await auth.signInWithPopup(githubAuthProvider);
-  //     const { credential:{ accessToken: token }, user } = googleUserData;
-  //     setUser(user);  
-  //     localStorage.setItem('@Github: token', token);
-  //     localStorage.setItem('@Github: user', JSON.stringify(user))
-  //   }
-  //   catch (error) {
-  //     const errorCode = error.code;
-  //     const errorMessage = error.message;
-  //     const email = error.customData.email;
-  //     const credential = FacebookAuthProvider.credentialFromError(error);
-  //     console.error(error);
-  //     console.log(errorCode, errorMessage, email, credential);
-  //   }
-  // }
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const loginData = new FormData(e.target);
-    const email = Object.fromEntries(loginData.entries()).email;
-    const password = Object.fromEntries(loginData.entries()).password;
-    console.log(e.target);
-    loginAccount(email, password);
+  const signInWithGithub = async () => {
+    const githubAuthProvider = new GithubAuthProvider();
+    try {
+      const result = await signInWithPopup(auth, githubAuthProvider);
+      const { user, 
+        user: { accessToken: token, email, displayName, photoURL, uid } 
+      } = result;
+      setUser(user);  
+      const userProfileRef = firestore.collection('users').doc(uid);
+      await setDoc(userProfileRef, { 
+        email,
+        name: displayName,
+        username: null,
+        avatarURL: photoURL,
+        createdAt: serverTimestamp(),
+        status: 'pending',
+      });
+      localStorage.setItem('@Github: token', token);
+      localStorage.setItem('@Github: user', JSON.stringify(user))
+    }
+    catch (error) {
+      const errorCode = error.code;
+      const errorMessage = error.message;
+      const credential = FacebookAuthProvider.credentialFromError(error);
+      console.error(error);
+      console.log(errorCode, errorMessage, credential);
+    }
   }
+
+
 
   return (
     <div className="login-page flex items-center justify-center">
@@ -151,13 +162,17 @@ export const Login = () => {
 
       <div
         id='login-card'
-        className='max-w-xl rounded-lg  my-2 shadow-md p-6 mx-4 md:mx-0'
+        className='max-w-xl rounded-lg shadow-md p-6 md:mx-0 mt-16'
       >
         <form 
-          className="w-full max-w-xl rounded-lg shadow-md p-6"
+          id='form-login'
+          className="w-full max-w-xl rounded-lg pr-6 pl-6"
           onSubmit={ handleSubmit }
         >
-          <div className="flex flex-wrap -mx-3 mt-6">
+          <div
+            id='form-and-login-btn'
+            className="flex flex-wrap -mx-3 -mb-3"
+          >
             <FormInput 
               name='email'
               div={{ className: "w-full md:w-full px-3 mb-6" }}
@@ -197,24 +212,32 @@ export const Login = () => {
               </div>
             </div>
 
-            <div className="w-full md:w-full px-3 mb-6">
-              <button 
-                id='btn-login'
-                className="appearance-none block w-full bg-blue-600 text-gray-100 font-bold border border-gray-200 rounded-lg py-3 px-3 leading-tight hover:bg-blue-500 focus:outline-none focus:bg-white focus:border-gray-500"
-              >
-                Login
-              </button>
-            </div>
+            <GenericButton 
+              div={{ className: 'w-full md:w-full px-3 mb-6' }}
+              button={{ 
+                id: 'btn-login',
+                className: 'appearance-none block w-full bg-blue-600 text-gray-100 font-bold border border-gray-200 rounded-lg py-3 px-3 leading-tight hover:bg-blue-500 focus:outline-none focus:bg-white focus:border-gray-500',
+                description: 'Login'
+              }}              
+            />
+
+          </div>
+          <div
+            id='sign-in-with'
+            className="text-center flex-wrap">
+              <span className="text-center text-xs text-gray-700 ">or sign up with</span>
           </div>
         </form>
-
-        <div className="text-center mx-auto -mb-6 pb-1">
-            <span className="text-center text-xs text-gray-700 ">or sign up with</span>
-        </div>
         
-        <div className="flex items-center w-full mt-2">
-          <Button 
-            div={{ className: 'w-full md:w-1/3 px-3 pt-6 mx-2 border-t border-gray-400' }}
+        <div
+          id='sign-in-btns'
+          className="flex items-center w-full -mt-2"
+        >
+          <GenericButton
+            div={{ 
+              id: 'google',
+              className: 'w-full md:w-1/3 ml-6 pt-6 pr-4 border-t border-gray-400' 
+            }}
             button={{ 
               id: 'btn-google',
               className: 'appearance-none flex items-center justify-center w-full bg-gray-100 text-gray-700 shadow border border-gray-500 rounded-lg py-3 px-3 leading-tight hover:bg-gray-200 hover:text-gray-700 focus:outline-none',
@@ -240,8 +263,11 @@ export const Login = () => {
             }}              
           />
 
-          <Button 
-            div={{ className: 'w-full md:w-1/3 px-3 pt-6 mx-2' }}
+          <GenericButton 
+            div={{
+              id: 'facebook',
+              className: 'w-full md:w-1/3 pt-6 px-2' 
+            }}
             button={{ 
               id: 'btn-facebook',
               className: 'appearance-none flex items-center justify-center w-full bg-gray-100 text-gray-700 shadow border border-gray-500 rounded-lg py-3 px-3 leading-tight hover:bg-gray-200 hover:text-gray-700 focus:outline-none',
@@ -258,17 +284,20 @@ export const Login = () => {
             }}              
           />
 
-          <Button 
-            div={{ className: 'w-full md:w-1/3 px-3 pt-6 mx-2 border-t border-gray-400' }}
+          <GenericButton 
+            div={{ 
+              id: 'github',
+              className: 'w-full md:w-1/3 mr-6 pt-6 pl-4 border-t border-gray-400' 
+            }}
             button={{ 
               id: 'btn-facebook',
               className: 'appearance-none flex items-center justify-center w-full bg-gray-100 text-gray-700 shadow border border-gray-500 rounded-lg py-3 px-3 leading-tight hover:bg-gray-200 hover:text-gray-700 focus:outline-none',
-              onClick: signInWithFacebook,
+              onClick: signInWithGithub,
               svg: { 
                 className: 'h-6 w-6 fill-current text-gray-700',
                 viewBox: '0 0 512 512',
                 path: {
-                  d: `M496,109.5a201.8,201.8,0,0,1-56.55,15.3,97.51,97.51,0,0,0,43.33-53.6,197.74,197.74,0,0,1-62.56,23.5A99.14,99.14,0,0,0,348.31,64c-54.42,0-98.46,43.4-98.46,96.9a93.21,93.21,0,0,0,2.54,22.1,280.7,280.7,0,0,1-203-101.3A95.69,95.69,0,0,0,36,130.4C36,164,53.53,193.7,80,211.1A97.5,97.5,0,0,1,35.22,199v1.2c0,47,34,86.1,79,95a100.76,100.76,0,0,1-25.94,3.4,94.38,94.38,0,0,1-18.51-1.8c12.51,38.5,48.92,66.5,92.05,67.3A199.59,199.59,0,0,1,39.5,405.6,203,203,0,0,1,16,404.2,278.68,278.68,0,0,0,166.74,448c181.36,0,280.44-147.7,280.44-275.8,0-4.2-.11-8.4-.31-12.5A198.48,198.48,0,0,0,496,109.5Z`
+                  d: `M 256 8 C 112 8 0 120 0 264 c 0 168 152 240 176 240 c 16 0 16 -8 16 -16 v -40 c -56 16 -80 -16 -88 -40 c 0 0 0 -8 -16 -24 c -8 -8 -40 -24 -8 -24 c 24 0 40 32 40 32 c 24 32 56 24 72 16 c 0 -16 16 -32 16 -32 c -64 -8 -112 -32 -112 -120 c 0 -32 8 -56 24 -72 c 0 0 -16 -32 0 -72 c 0 0 40 0 72 32 c 24 -16 104 -16 128 0 c 32 -32 72 -32 72 -32 c 16 56 0 72 0 72 c 16 16 24 40 24 72 c 0 88 -56 112 -112 120 c 8 8 16 24 16 48 v 64 c 0 8 0 16 16 16 c 24 0 176 -72 176 -240 C 512 120 400 8 256 8 Z`
                 },
               }
             }}              

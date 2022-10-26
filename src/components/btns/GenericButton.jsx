@@ -1,15 +1,16 @@
 /* eslint-disable react/prop-types */
 import React from 'react';
 
-export const Button = (props) => {
+export const GenericButton = (props) => {
   return (
     <div 
       className={ props.div.className }
+      id={ props.div.id ? props.div.id : null }
     >
       <button
         id={ props.button.id }
         className={ props.button.className }
-        onClick={ () => props.button.onClick() }
+        onClick={ props.button.onClick ? () => props.button.onClick() : null }
       >
         { props.button.description ? props.button.description : 
           <svg 
