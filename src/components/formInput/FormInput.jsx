@@ -4,7 +4,7 @@ import React from 'react';
 export const FormInput = (props) => {
   return (
     <div 
-      id= { props.div.id }
+      id={ props.div.id }
       className={ props.div.className }
     >
       <label className={ props.label.className }>
