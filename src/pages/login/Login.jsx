@@ -126,13 +126,11 @@ export const Login = () => {
     catch (error) {
       const errorCode = error.code;
       const errorMessage = error.message;
-      const credential = FacebookAuthProvider.credentialFromError(error);
+      const credential = GithubAuthProvider.credentialFromError(error);
       console.error(error);
       console.log(errorCode, errorMessage, credential);
     }
   }
-
-
 
   return (
     <div className="login-page flex items-center justify-center">
