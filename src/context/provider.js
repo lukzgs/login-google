@@ -4,7 +4,7 @@ import 'firebase/compat/auth';
 import 'firebase/compat/storage';
 
 import React, { useEffect, useState } from 'react';
-import { Context } from "./context"; 
+import { Context } from './context'; 
 
 export const Provider = ({ children }) => {
   const [user, setUser] = useState(null);
