@@ -12,6 +12,7 @@ export const AppRoutes = () => {
     <BrowserRouter>
       <Routes>
         <Route path='/' element={ <Login /> } />
+        <Route path='/login' element={ <Login /> } />
         <Route path='/verify' element={ <ConfirmEmail /> } />
         <Route path='/register' element={ <Register /> } />
         <Route path='/forgot-password' element={ <ForgotPassword /> } />
