@@ -202,7 +202,6 @@ export const Login = () => {
 
             <div className="w-full flex items-center justify-between px-3 mb-3 ">
               <label className="flex items-center w-1/2" />
-
               <div className="w-1/2 text-right">
                 <Link to='/forgot-password' className="text-blue-500 text-sm tracking-tight">
                     Forget your password?
@@ -211,15 +210,18 @@ export const Login = () => {
             </div>
 
             <GenericButton 
-              div={{ className: 'w-full md:w-full px-3 mb-6' }}
+              div={{ 
+                id:'login',
+                className: 'w-full md:w-full px-3 mb-6'
+               }}
               button={{ 
                 id: 'btn-login',
                 className: 'appearance-none block w-full bg-blue-600 text-gray-100 font-bold border border-gray-200 rounded-lg py-3 px-3 leading-tight hover:bg-blue-500 focus:outline-none focus:bg-white focus:border-gray-500',
                 description: 'Login'
               }}              
             />
-
           </div>
+          
           <div
             id='sign-in-with'
             className="text-center flex-wrap">
