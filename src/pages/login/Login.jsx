@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import React, { useCallback, useContext, useState } from 'react';
+import React, { useContext } from 'react';
 import { Link, Navigate } from 'react-router-dom';
 import { Context } from '../../context/context';
 import { firestore, auth } from '../../services/firebase';
@@ -10,7 +10,7 @@ import {
   GithubAuthProvider ,
   signInWithPopup,
 } from 'firebase/auth';
-import { addDoc, serverTimestamp, setDoc } from 'firebase/firestore';
+import { serverTimestamp, setDoc } from 'firebase/firestore';
 import { FormInput } from '../../components/formInput/FormInput';
 import { GenericButton } from '../../components/btns/GenericButton';
 
@@ -224,7 +224,8 @@ export const Login = () => {
           
           <div
             id='sign-in-with'
-            className="text-center flex-wrap">
+            className="text-center flex-wrap"
+          >
               <span className="text-center text-xs text-gray-700 ">or sign up with</span>
           </div>
         </form>
