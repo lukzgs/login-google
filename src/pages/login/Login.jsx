@@ -22,7 +22,7 @@ export const Login = () => {
     const email = Object.fromEntries(loginData.entries()).email;
     const password = Object.fromEntries(loginData.entries()).password;
     loginWithEmailAndPassword(email, password);
-  }
+  };
 
   const loginWithEmailAndPassword = async (email, password) => {
     try {
@@ -41,7 +41,7 @@ export const Login = () => {
     catch(error) {
       console.error(error);
     }
-  }
+  };
 
   const signInWithGoogle = async () => {
     const googleProvider = new GoogleAuthProvider();
@@ -61,7 +61,7 @@ export const Login = () => {
         status: 'pending',
       });
       localStorage.setItem('@Google: token', token);
-      localStorage.setItem('@Google: user', JSON.stringify(user))
+      localStorage.setItem('@Google: user', JSON.stringify(user));
     }
     catch (error) {
       const errorCode = error.code;
@@ -70,7 +70,7 @@ export const Login = () => {
       console.error(error);
       console.log(errorCode, errorMessage, credential);
     }
-  }
+  };
 
   const signInWithFacebook = async () => {
     const facebookProvider = new FacebookAuthProvider();
@@ -90,7 +90,7 @@ export const Login = () => {
         status: 'pending',
       });
       localStorage.setItem('@Facebook: token', token);
-      localStorage.setItem('@Facebook: user', JSON.stringify(user))
+      localStorage.setItem('@Facebook: user', JSON.stringify(user));
     }
     catch (error) {
       const errorCode = error.code;
@@ -99,7 +99,7 @@ export const Login = () => {
       console.error(error);
       console.log(errorCode, errorMessage, credential);
     }
-  }
+  };
 
   const signInWithGithub = async () => {
     const githubAuthProvider = new GithubAuthProvider();
@@ -119,7 +119,7 @@ export const Login = () => {
         status: 'pending',
       });
       localStorage.setItem('@Github: token', token);
-      localStorage.setItem('@Github: user', JSON.stringify(user))
+      localStorage.setItem('@Github: user', JSON.stringify(user));
     }
     catch (error) {
       const errorCode = error.code;
@@ -128,7 +128,7 @@ export const Login = () => {
       console.error(error);
       console.log(errorCode, errorMessage, credential);
     }
-  }
+  };
 
   return (
     <div className="login-page flex items-center justify-center">
@@ -176,7 +176,7 @@ export const Login = () => {
                   className: 'w-full md:w-full px-3 mb-6'
                 }}
                 label={{
-                  className: "block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2",
+                  className: 'block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2',
                   description: 'Email adress'
                 }}
                 input={{
@@ -303,7 +303,7 @@ export const Login = () => {
                   className: 'h-6 w-6 fill-current text-gray-700',
                   viewBox: '0 0 512 512',
                   path: {
-                    d: `M 256 8 C 112 8 0 120 0 264 c 0 168 152 240 176 240 c 16 0 16 -8 16 -16 v -40 c -56 16 -80 -16 -88 -40 c 0 0 0 -8 -16 -24 c -8 -8 -40 -24 -8 -24 c 24 0 40 32 40 32 c 24 32 56 24 72 16 c 0 -16 16 -32 16 -32 c -64 -8 -112 -32 -112 -120 c 0 -32 8 -56 24 -72 c 0 0 -16 -32 0 -72 c 0 0 40 0 72 32 c 24 -16 104 -16 128 0 c 32 -32 72 -32 72 -32 c 16 56 0 72 0 72 c 16 16 24 40 24 72 c 0 88 -56 112 -112 120 c 8 8 16 24 16 48 v 64 c 0 8 0 16 16 16 c 24 0 176 -72 176 -240 C 512 120 400 8 256 8 Z`
+                    d: 'M 256 8 C 112 8 0 120 0 264 c 0 168 152 240 176 240 c 16 0 16 -8 16 -16 v -40 c -56 16 -80 -16 -88 -40 c 0 0 0 -8 -16 -24 c -8 -8 -40 -24 -8 -24 c 24 0 40 32 40 32 c 24 32 56 24 72 16 c 0 -16 16 -32 16 -32 c -64 -8 -112 -32 -112 -120 c 0 -32 8 -56 24 -72 c 0 0 -16 -32 0 -72 c 0 0 40 0 72 32 c 24 -16 104 -16 128 0 c 32 -32 72 -32 72 -32 c 16 56 0 72 0 72 c 16 16 24 40 24 72 c 0 88 -56 112 -112 120 c 8 8 16 24 16 48 v 64 c 0 8 0 16 16 16 c 24 0 176 -72 176 -240 C 512 120 400 8 256 8 Z'
                   },
                 }
               }}
@@ -313,5 +313,5 @@ export const Login = () => {
         { !signed ? null : <Navigate to='/home' /> }
       </div>
     </div>
-  )
-}
+  );
+};

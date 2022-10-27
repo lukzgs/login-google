@@ -1,6 +1,6 @@
-import { useContext } from "react";
-import { Context } from "../../context/context";
-import { firestore } from "../firebase";
+import { useContext } from 'react';
+import { Context } from '../../context/context';
+import { firestore } from '../firebase';
 
 const useBatch = async (e) => {
   const { user } = useContext(Context);
@@ -16,4 +16,4 @@ const useBatch = async (e) => {
   });
 
   await batch.commit();
-}
+};

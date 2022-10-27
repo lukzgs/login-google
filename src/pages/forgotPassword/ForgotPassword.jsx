@@ -134,5 +134,5 @@ export const ForgotPassword = () => {
         </form>
       </div>
       </>
-  )
-              }
+  );
+              };

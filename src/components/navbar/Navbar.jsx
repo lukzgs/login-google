@@ -1,5 +1,5 @@
-import React, { useContext } from "react"
-import { Context } from "../../context/context"
+import React, { useContext } from 'react';
+import { Context } from '../../context/context';
 import './Navbar.css';
 
 export default function Navbar() {
@@ -14,5 +14,5 @@ export default function Navbar() {
         </ul>
       </nav>
     </div>
-  )
+  );
 }

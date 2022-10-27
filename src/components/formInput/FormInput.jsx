@@ -16,5 +16,5 @@ export const FormInput = (props) => {
         required={ props.input.required }
       />
     </div>
-  )
-}
+  );
+};

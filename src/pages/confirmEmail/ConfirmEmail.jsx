@@ -6,5 +6,5 @@ export const ConfirmEmail = () => {
     <div className="confirm-page h-screen w-screen">
       Please confirm your email 
     </div>
-  )
-}
+  );
+};

@@ -36,9 +36,9 @@ const handleSubmit = (e) => {
   const fullName = Object.fromEntries(loginData.entries()).fullName;
   const email = Object.fromEntries(loginData.entries()).email;
   const password = Object.fromEntries(loginData.entries()).password;
-  const form = { username, fullName, email, password }
+  const form = { username, fullName, email, password };
   signUpAccount(form);
-}
+};
 
   const signUpAccount = async (data) => {
     const { username, fullName, email, password } = data;
@@ -57,15 +57,15 @@ const handleSubmit = (e) => {
           avatarURL: null,
           createdAt: serverTimestamp(),
           status: 'pending',
-        })
+        });
         localStorage.setItem('@Logged: token', token);
-        localStorage.setItem('@Logged: user', JSON.stringify(user))
+        localStorage.setItem('@Logged: user', JSON.stringify(user));
       }
     }
     catch(error) {
       console.error(error);
     }    
-  }
+  };
 
   // TO DO:
   // FAZER A PARTE DE USERNAME E FULL NAME
@@ -240,5 +240,5 @@ const handleSubmit = (e) => {
         { !signed ? null : <Navigate to='/home' /> }
       </div>
     </div>
-  )
+  );
 };

@@ -12,7 +12,7 @@ export const Provider = ({ children }) => {
     const storageContent = () => {
       const localToken = localStorage.getItem('@AuthFirebase: token');
       const localUser = localStorage.getItem('@AuthFirebase: user');
-      if (localToken && localUser) { setUser(JSON.parse(localUser)) }
+      if (localToken && localUser) { setUser(JSON.parse(localUser)); }
     };
 
     storageContent();
@@ -22,11 +22,11 @@ export const Provider = ({ children }) => {
     user,
     setUser,
     signed: !!user,
-  }
+  };
 
   return (
     <Context.Provider value={ value }>
       { children }
     </Context.Provider> 
-  )
-}
+  );
+};

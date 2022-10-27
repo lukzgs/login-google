@@ -17,5 +17,9 @@
         "react"
     ],
     "rules": {
+        "semi": ["warn", "always"],
+        "quotes": ["warn", "single"],
+        "react/prop-types": ["warn"],
+        "no-unused-vars": ["warn"]
     }
 }

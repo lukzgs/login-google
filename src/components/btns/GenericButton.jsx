@@ -21,5 +21,5 @@ export const GenericButton = (props) => {
         }
       </button>
     </div>
-  )
-}
+  );
+};
