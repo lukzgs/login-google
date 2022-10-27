@@ -1,5 +1,3 @@
-/* eslint-disable no-unused-vars */
-/* eslint-disable react/prop-types */
 import 'firebase/compat/auth';
 import 'firebase/compat/storage';
 
