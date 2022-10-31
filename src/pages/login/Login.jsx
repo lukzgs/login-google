@@ -9,9 +9,11 @@ import {
   GithubAuthProvider ,
   signInWithPopup,
 } from 'firebase/auth';
+
 import { serverTimestamp, setDoc } from 'firebase/firestore';
 import { FormInput } from '../../components/formInput/FormInput';
 import { GenericButton } from '../../components/btns/GenericButton';
+import { Error } from '../../services/errors/Errors';
 
 export const Login = () => {
   const { setUser, signed } = useContext(Context);
@@ -36,10 +38,11 @@ export const Login = () => {
           uid,
         }
       } = result;
+
       setUser(user);
     }
-    catch(error) {
-      console.error(error);
+    catch(e) {
+      Error(e);
     }
   };
 
@@ -131,7 +134,7 @@ export const Login = () => {
   };
 
   return (
-    <div className="login-page flex items-center justify-center">
+    <div className='login-page flex justify-center h-screen w-screen bg-gray-100'>
       <div className="login-landpage">
         <div
           className="text-center mt-24"
@@ -158,7 +161,7 @@ export const Login = () => {
 
         <div
           id='login-card'
-          className='max-w-xl rounded-lg shadow-md px-6 pt-12 pb-6 md:mx-0 mx-4 mt-16'
+          className='max-w-xl rounded-lg shadow-md px-6 pt-12 pb-6 md:mx-0 mx-4 mt-16 bg-white'
         >
           <form
             id='login-form'

@@ -14,6 +14,7 @@ import {
 } from 'firebase/auth'; 
 import { FormInput } from '../../components/formInput/FormInput';
 import { GenericButton } from '../../components/btns/GenericButton';
+import { Error } from '../../services/errors/Errors';
 
 
 export const Register = () => {
@@ -62,8 +63,9 @@ const handleSubmit = (e) => {
         localStorage.setItem('@Logged: user', JSON.stringify(user));
       }
     }
-    catch(error) {
-      console.error(error);
+    catch(e) {
+      console.log(e);
+      Error(e);
     }    
   };
 
@@ -123,7 +125,7 @@ const handleSubmit = (e) => {
   // );
 
   return (
-    <div className='login-page flex items-center justify-center'>
+    <div className='login-page flex h-screen w-screen justify-center bg-gray-100'>
       <div className='login-landpage'>
         <div 
           className='text-center mt-24'
@@ -142,7 +144,7 @@ const handleSubmit = (e) => {
 
         <div
           id='register-card'
-          className='max-w-xl rounded-lg shadow-md px-6 pt-12 pb-6 md:mx-0 mx-4 mt-16'
+          className='max-w-xl rounded-lg shadow-md px-6 pt-12 pb-6 md:mx-0 mx-4 mt-16  bg-white'
         >
           <form
             id='register-form'
