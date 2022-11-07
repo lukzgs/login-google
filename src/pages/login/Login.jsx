@@ -134,7 +134,8 @@ export const Login = () => {
   };
 
   return (
-    <div className='login-page flex justify-center h-screen w-screen bg-gray-100'>
+    <div className='login-page flex justify-center h-screen w-screen bg-gray-100 
+    bg-gradient-to-r from-stone-50 to-gray-900'>
       <div className="login-landpage">
         <div
           className="text-center mt-24"
