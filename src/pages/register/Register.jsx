@@ -125,7 +125,7 @@ const handleSubmit = (e) => {
   // );
 
   return (
-    <div className='login-page flex h-screen w-screen justify-center bg-gray-100'>
+    <div className='login-page flex h-screen w-screen justify-center bg-gray-900 bg-gradient-to-r from-gray-900 to-gray-100'>
       <div className='login-landpage'>
         <div 
           className='text-center mt-24'
@@ -211,7 +211,7 @@ const handleSubmit = (e) => {
                 name='password'
                 div={{
                   id: 'password-register-form',
-                  className: 'w-full md:w-full px-3 mb-6',
+                  className: 'w-full md:w-full px-3 mb-9',
                 }}
                 label= {{
                   className: 'block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2',

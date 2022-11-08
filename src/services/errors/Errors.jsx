@@ -1,6 +1,9 @@
-export const Error = (error) => {
-  const { code } = error;
+import toast from 'react-hot-toast';
 
+export const HandleError = (error) => {
+  console.log(error);
+
+  toast.error(error);
   const errorCodes = [
     [ 'auth/user-not-found', { message: 'Usuário não encontrado' }],
     [ 'auth/wrong-password', { message: 'Senha incorreta' }],
@@ -10,7 +13,11 @@ export const Error = (error) => {
   ];
 
   const errorsMap = new Map(errorCodes);
-  const findError = errorsMap.has((error.message));
-  if (findError) { return console.log(errorsMap.get(code).message); }
-  else { return 'outro erro, descobrir'; }
+  console.log(errorsMap);
+  const findError = errorsMap.has((error));
+  console.log(findError);
+  // if (findError) { return console.log(errorsMap.get(error).message); }
+  // else { return 'outro erro, descobrir'; }
+
+  return toast.error(error);
 };

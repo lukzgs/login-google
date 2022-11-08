@@ -13,7 +13,9 @@ import {
 import { serverTimestamp, setDoc } from 'firebase/firestore';
 import { FormInput } from '../../components/formInput/FormInput';
 import { GenericButton } from '../../components/btns/GenericButton';
-import { Error } from '../../services/errors/Errors';
+import { HandleError } from '../../services/errors/Errors';
+
+import toast from 'react-hot-toast';
 
 export const Login = () => {
   const { setUser, signed } = useContext(Context);
@@ -38,11 +40,11 @@ export const Login = () => {
           uid,
         }
       } = result;
-
       setUser(user);
     }
     catch(e) {
-      Error(e);
+      console.log(e);
+      toast.error(e.message);
     }
   };
 
@@ -134,8 +136,8 @@ export const Login = () => {
   };
 
   return (
-    <div className='login-page flex justify-center h-screen w-screen bg-gray-100 
-    bg-gradient-to-r from-stone-50 to-gray-900'>
+    <div 
+      className='login-page flex justify-center h-screen w-screen bg-gradient-to-r from-stone-50 to-gray-900'>
       <div className="login-landpage">
         <div
           className="text-center mt-24"
@@ -225,7 +227,7 @@ export const Login = () => {
                 }}
                 button={{
                   id: 'btn-login',
-                  className: 'appearance-none block w-full bg-blue-600 text-gray-100 font-bold border border-gray-200 rounded-lg py-3 px-3 leading-tight hover:bg-blue-500 focus:outline-none focus:bg-white focus:border-gray-500',
+                  className: 'appearance-none block w-full bg-blue-600 text-gray-100 font-bold border border-gray-200 rounded-lg py-3 px-3 leading-tight hover:shadow-md focus:outline-none focus:bg-white focus:border-gray-500 bg-gradient-to-r from-fuchsia-500 to-cyan-500',
                   description: 'Login'
                 }}
               />
@@ -314,7 +316,9 @@ export const Login = () => {
             />
           </div>
         </div>
-        { !signed ? null : <Navigate to='/home' /> }
+        { !signed ? null : (
+          toast.success('Welcome Back') && <Navigate to='/home' />
+        ) }
       </div>
     </div>
   );
