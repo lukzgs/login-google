@@ -1,6 +1,7 @@
 import React, { useContext, useEffect } from 'react';
 import { Context } from '../../context/context';
 import { Navbar } from '../../components/navbar/Navbar';
+import { Footer } from '../../components/footer/Footer';
 
 export const Home = () => {
   const { user, setUser } = useContext(Context);
@@ -16,14 +17,13 @@ export const Home = () => {
   }, []);
 
   return (
-    <div className='bg-gray-200'>
+    <div className='bg-gray-400 flex flex-col h-screen justify-between'>
       <Navbar />
-      <main className='w-screen h-screen'>
-        <div className='pt-20 p-4 h-screen'>
-          <h1>Home</h1>
-          <h3>Welcome { user.displayName? user.displayName : user.email }</h3>
-          </div>
+      <main className='h-screen p-4 mt-20 mb-20'>
+        <h1>Home</h1>
+        <h3>Welcome { user.displayName? user.displayName : user.email }</h3>
       </main>
+      <Footer />
     </div>
   );
 };

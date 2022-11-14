@@ -1,6 +1,4 @@
 import React, { useContext } from 'react';
-// import { CgMonday } from 'react-icons/cg';
-// import classNames from 'classnames';
 import { Link, Navigate } from 'react-router-dom';
 import { Context } from '../../context/context';
 import { auth } from '../../services/firebase';
@@ -21,25 +19,13 @@ export const Navbar = ({ navigationData, currentRoute, setCurrentRoute }) => {
   };
 
   return (
-    <div className='fixed w-screen'>
+    <header className='fixed w-screen'>
       <nav className='hidden md:flex flex-row items-center justify-between px-8 h-16 rounded-b-3xl bg-gray-900'>
-        <span className='text-5xl text-gray-800 -mb-1'>
-        </span>
         <ul className='flex flex-row self-end h-12'>
-          {/* { navigationData.map((item, index) => (
-            <li
-              className='w-22 text-gray-400 hover:text-gray-700 cursor-pointer font-medium tracking-wide text-sm flex items-start justify-center'
-              key={index}
-              onClick={() => setCurrentRoute(item)}
-            >
-              {item}
-            </li>
-          ))} */}
         </ul>
         <div
           id='btns-nav-right-side'
-          className='flex'
-        >
+          className='flex'>
           <div className='py-3 px-3'>
             <Link to='/profile'>
               <img 
@@ -63,31 +49,6 @@ export const Navbar = ({ navigationData, currentRoute, setCurrentRoute }) => {
           />
         </div>
       </nav>
-    </div>
+    </header>
   );
 };
-
-
-// .navbar {
-//   @apply hidden md:flex flex-row items-center justify-between px-8 h-18 rounded-b-3xl bg-white;
-// }
-
-// .logo {
-//   @apply text-5xl text-gray-800 -mb-1;
-// }
-
-// .navItems {
-//   @apply flex flex-row self-end h-12;
-// }
-
-// .navItem {
-//   @apply w-22 text-gray-400 hover:text-gray-700 cursor-pointer font-medium tracking-wide text-sm flex items-start justify-center;
-// }
-
-// .selectedNavItem {
-//   @apply text-gray-700 border-b-3 border-gray-700 bg-gradient-to-b from-white to-gray-100;
-// }
-
-// .actions {
-//   @apply bg-white hover:bg-gray-50 border-2 border-gray-900 text-sm text-gray-900 py-3 px-5 rounded-lg font-medium tracking-wide leading-none;
-// }
