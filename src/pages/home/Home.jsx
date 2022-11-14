@@ -16,12 +16,14 @@ export const Home = () => {
   }, []);
 
   return (
-    <>
-    <Navbar />
-    <main className='w-screen h-screen'>
-      <h1>Home</h1>
-      <h3>Welcome { user.displayName? user.displayName : user.email }</h3>
-    </main>
-    </>
+    <div className='bg-gray-200'>
+      <Navbar />
+      <main className='w-screen h-screen'>
+        <div className='pt-20 p-4 h-screen'>
+          <h1>Home</h1>
+          <h3>Welcome { user.displayName? user.displayName : user.email }</h3>
+          </div>
+      </main>
+    </div>
   );
 };

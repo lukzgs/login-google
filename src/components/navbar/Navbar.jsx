@@ -10,6 +10,7 @@ import { GenericButton } from '../btns/GenericButton';
 export const Navbar = ({ navigationData, currentRoute, setCurrentRoute }) => {
   const { user, setUser } = useContext(Context);
   // CONTINUAR https://dev.to/franciscomendes10866/create-a-responsive-navbar-using-react-and-tailwind-3768
+  // OUTRO https://www.notimedad.dev/responsive-navbar-tailwind-react/
   console.log(user);
 
   const signingOut = () => {
@@ -20,52 +21,49 @@ export const Navbar = ({ navigationData, currentRoute, setCurrentRoute }) => {
   };
 
   return (
-    <nav 
-      className='hidden md:flex flex-row items-center justify-between px-8 h-18 rounded-b-3xl bg-gray-900'
-    >
-      <span className='text-5xl text-gray-800 -mb-1'>
-      </span>
-      <ul 
-        className='flex flex-row self-end h-12'
-      >
-        {/* { navigationData.map((item, index) => (
-          <li
-            className='w-22 text-gray-400 hover:text-gray-700 cursor-pointer font-medium tracking-wide text-sm flex items-start justify-center'
-            key={index}
-            onClick={() => setCurrentRoute(item)}
-          >
-            {item}
-          </li>
-        ))} */}
-      </ul>
-      <div
-        id='btns-nav-right-side'
-        className='flex'
-      >
+    <div className='fixed w-screen'>
+      <nav className='hidden md:flex flex-row items-center justify-between px-8 h-16 rounded-b-3xl bg-gray-900'>
+        <span className='text-5xl text-gray-800 -mb-1'>
+        </span>
+        <ul className='flex flex-row self-end h-12'>
+          {/* { navigationData.map((item, index) => (
+            <li
+              className='w-22 text-gray-400 hover:text-gray-700 cursor-pointer font-medium tracking-wide text-sm flex items-start justify-center'
+              key={index}
+              onClick={() => setCurrentRoute(item)}
+            >
+              {item}
+            </li>
+          ))} */}
+        </ul>
         <div
-          className='py-3 px-3'>
-          <Link to='/profile'>
-            <img 
-              src={ user?.photoURL || 'https://drowtales.com/wordpress/wp-content/uploads/2017/02/ga-sekhriat.jpg' } 
-              className='rounded-full w-10 h-10'
-            />
-          </Link>
-        </div>
+          id='btns-nav-right-side'
+          className='flex'
+        >
+          <div className='py-3 px-3'>
+            <Link to='/profile'>
+              <img 
+                src={ user?.photoURL || 'https://drowtales.com/wordpress/wp-content/uploads/2017/02/ga-sekhriat.jpg' } 
+                className='rounded-full w-10 h-10'
+              />
+            </Link>
+          </div>
 
-        <GenericButton 
-          div={{
-            id: 'logout',
-            className: 'py-3 px-3'
-          }}
-          button={{
-            id: 'btn-logout',
-            className: 'border-gray-900 bg-gray-100 border-2 text-sm text-gray-900 py-3 px-5 rounded-lg font-medium tracking-wide leading-none',
-            onClick: signingOut,
-            description: 'Logout'
-          }} 
-        />
-      </div>
-    </nav>
+          <GenericButton 
+            div={{
+              id: 'logout',
+              className: 'py-3 px-3'
+            }}
+            button={{
+              id: 'btn-logout',
+              className: 'border-gray-900 bg-gray-100 border-2 text-sm text-gray-900 py-3 px-5 rounded-lg font-medium tracking-wide leading-none',
+              onClick: signingOut,
+              description: 'Logout'
+            }} 
+          />
+        </div>
+      </nav>
+    </div>
   );
 };
 
