@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 import { Link, Navigate } from 'react-router-dom';
 import { Context } from '../../context/context';
-import { firestore, auth } from '../../services/firebase';
+import { firestore, auth, db } from '../../services/firebase';
 import { 
   signInWithEmailAndPassword,
   GoogleAuthProvider,
@@ -10,7 +10,7 @@ import {
   signInWithPopup,
 } from 'firebase/auth';
 
-import { serverTimestamp, setDoc } from 'firebase/firestore';
+import { collection, serverTimestamp, setDoc, onSnapshot } from 'firebase/firestore';
 import { FormInput } from '../../components/formInput/FormInput';
 import { GenericButton } from '../../components/btns/GenericButton';
 import { HandleError } from '../../services/errors/Errors';
@@ -56,6 +56,23 @@ export const Login = () => {
         user: { accessToken: token, email, displayName, photoURL, uid } 
       } = result;
       setUser(user);
+      // working on something
+      // tentando resolver o problema da foto que fica bugada
+      const colRef = collection(db, 'users');
+      console.log('user', user);
+      onSnapshot(colRef, (snapshot) => {
+        snapshot.docs.forEach((doc) => {
+          console.log(doc.data());
+        });
+    });
+
+        // .then((snapshot) =>
+        // snapshot.docs.
+        // );
+      //   const users = firestore.collection('users').doc(user.uid);
+
+      console.log('colRef new:', colRef);
+      // isso aqui é original e funciona
       const userProfileRef = firestore.collection('users').doc(uid);
       await setDoc(userProfileRef, { 
         email,

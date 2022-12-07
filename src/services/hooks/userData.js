@@ -7,16 +7,19 @@ export const useUserData = () => {
   const [ username, setUsername ] = useState(null);
 
   useEffect(() => {
-    let unsubscribe;
+    console.log(user);
+    // let unsubscribe;
 
-    if (user) {
-      const users = firestore.collection('users').doc(user.uid);
-      unsubscribe = users.onSnapshot((doc) => { setUsername(doc.data()?.username);});
-    }
-    else { setUsername(null); }
+    // if (user) {
+    //   const users = firestore.collection('users').doc(user.uid);
+    //   unsubscribe = users.onSnapshot((doc) => { setUsername(doc.data()?.username);});
+    // }
+    // else { setUsername(null); }
     
-    return unsubscribe;
+    // return unsubscribe;
   }, [user]);
 
-  return { user, username };
+  // return { user, username };
+  return console.log(user);
+
 };
