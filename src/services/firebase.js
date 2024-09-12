@@ -12,14 +12,11 @@ import 'firebase/compat/firestore';
 
 import { firebaseConfig } from '../firebase';
 
-
 if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
 
-// export const oldAuth = firebase.auth();
 export const auth = getAuth();
 export const db = getFirestore();
 
-// old way
 export const firestore = firebase.firestore();
 firestore.settings({ timestampsInSnapshots: true });
 
